@@ -5,61 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Báo Cáo Quy Đổi</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
+        body {
+            font-family: 'Google Sans', sans-serif;
+        }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
             -webkit-appearance: none; margin: 0;
         }
         input[type=number] { -moz-appearance: textfield; }
+        
         th, td { border: 1px solid #e2e8f0; }
+        tr { height: 30px !important; }
+        input { height: 100%; padding-top: 2px; padding-bottom: 2px; font-family: 'Google Sans', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased text-sm">
+<body class="bg-gray-100 antialiased text-sm select-none overflow-hidden">
 
-    <div id="report-area" class="max-w-md mx-auto bg-white min-h-screen flex flex-col shadow-xl">
+    <div id="report-area" class="max-w-md mx-auto bg-white h-screen flex flex-col shadow-xl overflow-hidden">
         
-        <div class="bg-[#0070c0] text-white p-4 sticky top-0 z-30">
-            <h1 class="text-center font-bold text-lg uppercase mb-4 tracking-wide">Báo Cáo Quy Đổi - Trả Chậm</h1>
+        <div class="bg-[#0070c0] text-white p-2.5 flex-none z-30 shadow-sm">
+            <h1 class="text-center font-bold text-sm uppercase mb-2 tracking-wide">Báo Cáo Quy Đổi - Trả Chậm</h1>
             
             <div class="grid grid-cols-3 gap-2">
-                <div class="bg-[#0d47a1] rounded-lg p-2 flex flex-col items-center border border-blue-400/30">
-                    <span class="text-[10px] uppercase font-bold text-blue-200">Ngày áp dụng</span>
-                    <input type="date" id="b1" class="bg-transparent text-white font-bold text-xs w-full text-center focus:outline-none mt-1">
+                <div class="bg-[#0d47a1] rounded p-1 flex flex-col items-center border border-blue-400/30">
+                    <span class="text-[9px] uppercase font-bold text-blue-200">Ngày áp dụng</span>
+                    <input type="date" id="b1" class="bg-transparent text-white font-bold text-xs w-full text-center focus:outline-none mt-0.5">
                 </div>
-                <div class="bg-[#0d47a1] rounded-lg p-2 flex flex-col items-center border border-blue-400/30">
-                    <span class="text-[10px] uppercase font-bold text-blue-200 text-center leading-tight">Quy đổi<br>(H1)</span>
-                    <span id="h1" class="text-2xl font-black text-yellow-400 mt-1">0%</span>
+                <div class="bg-[#0d47a1] rounded p-1 flex flex-col items-center border border-blue-400/30">
+                    <span class="text-[9px] uppercase font-bold text-blue-200 text-center leading-none">Quy đổi (H1)</span>
+                    <span id="h1" class="text-xl font-black text-yellow-400 mt-0.5">0%</span>
                 </div>
-                <div class="bg-[#0d47a1] rounded-lg p-2 flex flex-col items-center border border-blue-400/30">
-                    <span class="text-[10px] uppercase font-bold text-blue-200 text-center leading-tight">Trả chậm<br>(I1)</span>
-                    <span id="i1" class="text-2xl font-black text-yellow-400 mt-1">0%</span>
+                <div class="bg-[#0d47a1] rounded p-1 flex flex-col items-center border border-blue-400/30">
+                    <span class="text-[9px] uppercase font-bold text-blue-200 text-center leading-none">Trả chậm (I1)</span>
+                    <span id="i1" class="text-xl font-black text-yellow-400 mt-0.5">0%</span>
                 </div>
             </div>
         </div>
 
-        <div class="flex-1 overflow-auto relative">
-            <table class="w-full border-collapse table-fixed min-w-[750px]">
+        <div class="flex-1 overflow-auto bg-white relative">
+            <table class="w-full border-collapse table-fixed min-w-[640px]">
                 <thead>
-                    <tr class="bg-[#fce4d6] text-gray-800 font-bold text-center sticky top-0 z-20 shadow-sm">
-                        <th class="w-24 py-3 sticky left-0 bg-[#fce4d6] z-25 border-r-2 border-gray-300">Nhóm</th>
-                        <th class="w-16">Hệ số</th>
-                        <th class="w-12 text-red-600">SL</th>
-                        <th class="w-20">T. mặt</th>
-                        <th class="w-20">T. Góp</th>
-                        <th class="w-20">Ví</th>
-                        <th class="w-20 text-blue-700">DTQĐ</th>
-                        <th class="w-20">PMH</th>
-                        <th class="w-28">Khai thác</th>
+                    <tr class="bg-[#fce4d6] text-gray-800 font-bold text-center text-xs sticky top-0 z-20 shadow-sm">
+                        <th class="w-20 py-1 sticky left-0 bg-[#fce4d6] z-25 border-r-2 border-gray-300">Nhóm</th>
+                        <th class="w-12">Hệ số</th>
+                        <th class="w-10 text-red-600">SL</th>
+                        <th class="w-16">T. mặt</th>
+                        <th class="w-16">T. Góp</th>
+                        <th class="w-16">Ví</th>
+                        <th class="w-16 text-blue-700">DTQĐ</th>
+                        <th class="w-14">PMH</th>
+                        <th class="w-20">Khai thác</th>
                     </tr>
                 </thead>
-                <tbody id="data-rows" class="bg-white">
-                </tbody>
+                <tbody id="data-rows" class="bg-white text-xs">
+                    </tbody>
             </table>
         </div>
 
-        <div data-html2canvas-ignore class="p-3 bg-gray-50 border-t flex gap-3 z-30">
-            <button onclick="resetData()" class="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold active:scale-95 transition-transform uppercase text-xs">Xóa nhập liệu</button>
-            <button onclick="captureReport()" class="flex-1 py-3 bg-[#0070c0] text-white rounded-xl font-bold active:scale-95 transition-transform shadow-lg uppercase text-xs">Chụp báo cáo</button>
+        <div data-html2canvas-ignore class="p-2.5 bg-gray-50 border-t flex gap-2 flex-none z-30">
+            <button onclick="resetData()" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded font-bold active:scale-95 transition-transform uppercase text-xs">Xóa</button>
+            <button onclick="captureReport()" class="flex-1 py-2 bg-[#0070c0] text-white rounded font-bold active:scale-95 transition-transform shadow uppercase text-xs">Chụp báo cáo</button>
         </div>
     </div>
 
@@ -77,33 +85,51 @@
         
         config.forEach((item, i) => {
             const row = document.createElement('tr');
-            row.className = "text-center transition-colors hover:bg-blue-50/30";
+            row.className = "text-center transition-colors hover:bg-blue-50/20";
             row.innerHTML = `
-                <td class="sticky left-0 bg-white font-bold text-gray-900 px-2 py-3 border-r-2 border-gray-200 z-10 text-left">${item.n}</td>
-                <td class="text-gray-500 font-medium">${Math.round(item.hs * 100)}%</td>
-                <td><input type="number" inputmode="numeric" class="w-full text-center font-bold text-red-600 focus:outline-none bg-transparent"></td>
-                <td><input type="number" inputmode="numeric" id="d-${i}" oninput="calc()" class="w-full text-center focus:bg-blue-50 focus:outline-none bg-transparent py-1"></td>
-                <td><input type="number" inputmode="numeric" id="e-${i}" oninput="calc()" class="w-full text-center focus:bg-blue-50 focus:outline-none bg-transparent py-1"></td>
-                <td><input type="number" inputmode="numeric" id="f-${i}" oninput="calc()" class="w-full text-center focus:bg-blue-50 focus:outline-none bg-transparent py-1"></td>
-                <td id="g-${i}" class="font-bold text-blue-700 bg-gray-50/50"></td>
-                <td><input type="text" class="w-full text-center text-[10px] focus:outline-none bg-transparent"></td>
-                <td><input type="text" class="w-full text-left px-2 text-[10px] focus:outline-none bg-transparent"></td>
+                <td class="sticky left-0 bg-white font-bold text-gray-900 px-1 py-0.5 border-r-2 border-gray-200 z-10 text-left truncate">${item.n}</td>
+                <td class="text-gray-500 font-semibold">${Math.round(item.hs * 100)}%</td>
+                <td class="p-0"><input type="text" inputmode="numeric" oninput="formatNumberInput(this); calc();" class="w-full text-center font-bold text-red-600 focus:outline-none bg-transparent"></td>
+                <td class="p-0"><input type="text" inputmode="numeric" id="d-${i}" oninput="formatNumberInput(this); calc();" class="w-full text-center focus:bg-blue-50 focus:outline-none bg-transparent"></td>
+                <td class="p-0"><input type="text" inputmode="numeric" id="e-${i}" oninput="formatNumberInput(this); calc();" class="w-full text-center focus:bg-blue-50 focus:outline-none bg-transparent"></td>
+                <td class="p-0"><input type="text" inputmode="numeric" id="f-${i}" oninput="formatNumberInput(this); calc();" class="w-full text-center focus:bg-blue-50 focus:outline-none bg-transparent"></td>
+                <td id="g-${i}" class="font-bold text-blue-700 bg-gray-50/50 px-1 py-0.5 truncate"></td>
+                <td class="p-0"><input type="text" class="w-full text-center text-[10px] focus:outline-none bg-transparent"></td>
+                <td class="p-0"><input type="text" class="w-full text-left px-1 text-[10px] focus:outline-none bg-transparent"></td>
             `;
             tbody.appendChild(row);
         });
 
+        function formatNumberInput(element) {
+            let value = element.value.replace(/\./g, '');
+            if (!isNaN(value) && value !== '') {
+                element.value = parseFloat(value).toLocaleString('vi-VN');
+            } else {
+                element.value = '';
+            }
+        }
+
+        function getRawValue(id) {
+            const val = document.getElementById(id).value.replace(/\./g, '');
+            return parseFloat(val) || 0;
+        }
+
+        function formatDisplay(num) {
+            return num.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+        }
+
         function calc() {
             let sumDF = 0, sumEF = 0, sumG = 0;
             config.forEach((item, i) => {
-                const d = parseFloat(document.getElementById(`d-${i}`).value) || 0;
-                const e = parseFloat(document.getElementById(`e-${i}`).value) || 0;
-                const f = parseFloat(document.getElementById(`f-${i}`).value) || 0;
+                const d = getRawValue(`d-${i}`);
+                const e = getRawValue(`e-${i}`);
+                const f = getRawValue(`f-${i}`);
                 const df = d + e + f;
                 const ef = e + f;
                 
                 if (df > 0) {
                     const g = (df * item.hs) + (ef * 0.3);
-                    document.getElementById(`g-${i}`).innerText = g.toFixed(1).replace('.0', '');
+                    document.getElementById(`g-${i}`).innerText = formatDisplay(g);
                     sumG += g;
                 } else {
                     document.getElementById(`g-${i}`).innerText = '';
@@ -119,32 +145,29 @@
         }
 
         function resetData() {
-            const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
+            const inputs = document.querySelectorAll('input[type="text"]');
             inputs.forEach(el => el.value = '');
             calc();
         }
 
-        // ================= HÀM CHỤP MÀN HÌNH VÙNG CHỌN =================
         function captureReport() {
             const target = document.getElementById('report-area');
+            // Tạm thời bỏ overflow-hidden để html2canvas tính đúng chiều cao thật khi chụp ảnh báo cáo
+            target.classList.remove('h-screen', 'overflow-hidden');
             
-            // Cấu hình chụp sắc nét và nhận diện đúng css trên thiết bị di động
             html2canvas(target, {
                 useCORS: true,
-                scale: 2, // Nhân đôi độ phân giải để ảnh lưu về không bị mờ nét chữ
+                scale: 2,
                 scrollX: 0,
                 scrollY: 0
             }).then(canvas => {
-                // Chuyển kết quả canvas thành file ảnh PNG
+                // Trả lại trạng thái khóa màn hình sau khi chụp xong
+                target.classList.add('h-screen', 'overflow-hidden');
+                
                 const image = canvas.toDataURL("image/png");
-                
-                // Tạo link tải ảnh tự động
                 const link = document.createElement('a');
-                
-                // Lấy ngày hiện tại để đặt tên file cho dễ quản lý
                 const dateStr = new Date().toLocaleDateString('vi-VN').replace(/\//g, '-');
                 link.download = `Bao-Cao-Quy-Doi-${dateStr}.png`;
-                
                 link.href = image;
                 link.click();
             });
