@@ -8,21 +8,28 @@
         @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
         body { font-family: 'Google Sans', sans-serif; margin: 0; background: #f3f4f6; touch-action: manipulation; }
-        .container { min-width: 600px; min-height: 100vh; display: flex; flex-direction: column; background: white; }
+        .container { min-width: 400px; min-height: 100vh; display: flex; flex-direction: column; background: white; }
+        
         .header { background: #0070c0; color: white; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .header-top { display: flex; gap: 8px; align-items: center; }
         .input-box { background: rgba(0,0,0,0.2); border-radius: 4px; padding: 4px; flex: 1; height: 50px; display: flex; flex-direction: column; justify-content: center; }
         .label { font-size: 7px; opacity: 0.8; text-transform: uppercase; text-align: center; }
         .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 12px; width: 100%; outline: none; }
         .big-stat { font-size: 18px; font-weight: 700; color: #fde047; text-align: center; }
+
         .table-wrap { flex: 1; overflow-x: auto; background: white; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid #e5e7eb; }
+        
+        /* Header nổi bật */
+        thead { background: #005a9e; color: white; }
+        th { font-size: 9px; font-weight: 700; border: 1px solid #0070c0; padding: 4px 2px; text-transform: uppercase; }
+        
         tr { height: 24px; }
-        th { font-size: 9px; color: #666; background: #f9fafb; border: 1px solid #e5e7eb; padding: 2px; }
         td { border: 1px solid #e5e7eb; padding: 0; text-align: center; }
         .cell-input { width: 100%; height: 22px; border: none; text-align: center; font-size: 12px; font-weight: 500; outline: none; }
         .sticky-col { position: sticky; left: 0; background: white; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 11px; border-right: 1px solid #e5e7eb; }
         .dtqd-col { font-weight: bold; color: #dc2626; font-size: 12px; }
+        
         .footer { padding: 10px; background: white; }
         .btn-reset { width: 100%; padding: 10px; background: #ef4444; color: white; border: none; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; }
     </style>
@@ -60,13 +67,13 @@
                 <tr>
                     <th style="width: 70px;">Nhóm</th>
                     <th style="width: 40px;">Hệ số</th>
-                    <th style="width: 30px;">SL</th>
-                    <th style="width: 50px;">T.Mặt</th>
-                    <th style="width: 50px;">T.Góp</th>
-                    <th style="width: 50px;">Ví</th>
-                    <th style="width: 50px;">DTQĐ</th>
-                    <th style="width: 40px;">PMH</th>
-                    <th style="width: 70px;">Khai thác</th>
+                    <th style="width: 25px;">SL</th>
+                    <th style="width: 35px;">T.Mặt</th>
+                    <th style="width: 35px;">T.Góp</th>
+                    <th style="width: 35px;">Ví</th>
+                    <th style="width: 45px;">DTQĐ</th>
+                    <th style="width: 45px;">PMH</th>
+                    <th style="width: 55px;">K.thác</th>
                 </tr>
             </thead>
             <tbody id="data-rows"></tbody>
@@ -119,24 +126,17 @@
         document.getElementById('i1').innerText = sDF ? Math.round((sG-sDF)/sDF*100) + '%' : '0%';
     }
 
-    // Lưu dữ liệu vào localStorage
     function saveData() {
         const data = {};
-        document.querySelectorAll('input').forEach(input => {
-            data[input.id || input.name] = input.value;
-        });
+        document.querySelectorAll('input').forEach(input => { data[input.id] = input.value; });
         localStorage.setItem('reportData', JSON.stringify(data));
     }
 
-    // Tải dữ liệu khi mở trang
     window.onload = function() {
         const saved = localStorage.getItem('reportData');
         if (saved) {
             const data = JSON.parse(saved);
-            Object.keys(data).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = data[id];
-            });
+            Object.keys(data).forEach(id => { const el = document.getElementById(id); if (el) el.value = data[id]; });
             calc();
         } else {
             const now = new Date();
