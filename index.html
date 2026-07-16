@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=6.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=3.0">
     <title>Báo Cáo Quy Đổi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -52,10 +52,11 @@
         <div class="grid-header">
             <div class="input-box"><div class="label">Tên NV</div><input type="text" id="nv-name" class="input-val" oninput="saveData()"></div>
             <div class="input-box"><div class="label">Tổng Doanh Thu</div><div id="total-rev" class="stat-val">0</div></div>
-            <div class="input-box"><div class="label">Quy đổi %</div><div id="h1" class="stat-val">0%</div></div>
+            <div class="input-box"><div class="label">Trả Góp %</div><div id="h1" class="stat-val">0%</div></div>
+            
             <div class="input-box"><div class="label">Ngày</div><input type="text" id="date-display" class="input-val" oninput="saveData()"></div>
             <div class="input-box"><div class="label">Tổng DT Góp</div><div id="tg-rev" class="stat-val">0</div></div>
-            <div class="input-box"><div class="label">Trả Góp %</div><div id="i1" class="stat-val">0%</div></div>
+            <div class="input-box"><div class="label">Quy đổi %</div><div id="i1" class="stat-val">0%</div></div>
         </div>
     </div>
 
@@ -106,7 +107,6 @@
         const btnGroup = document.getElementById('btn-group');
         btnGroup.style.display = 'none';
 
-        // Chụp cả Header và Table gộp lại
         const canvas = await html2canvas(document.getElementById('capture-area'), {
             scale: 3, 
             logging: false,
