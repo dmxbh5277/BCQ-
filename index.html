@@ -2,38 +2,36 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Báo Cáo Cao Cấp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=3.0">
+    <title>Báo Cáo Quy Đổi</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background-color: #0f172a; color: #f8fafc; touch-action: manipulation; }
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+        * { box-sizing: border-box; }
+        body { font-family: 'Google Sans', sans-serif; margin: 0; background: #f3f4f6; touch-action: manipulation; }
+        .container { min-width: 400px; min-height: 100vh; display: flex; flex-direction: column; background: white; }
         
-        .container { min-width: 350px; padding: 15px; }
+        .header { background: #0070c0; color: white; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .header-top { display: flex; gap: 8px; align-items: center; position: relative; }
+        .btn-reset-top { position: absolute; right: 0; background: #ef4444; color: white; border: none; padding: 2px 6px; font-size: 8px; border-radius: 3px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
         
-        /* HEADER NỔI BẬT */
-        .header { background: linear-gradient(160deg, #1e293b, #0f172a); border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .title { font-size: 16px; font-weight: 700; color: #cbd5e1; }
-        .btn-reset { background: #be123c; color: white; border: none; padding: 5px 12px; border-radius: 10px; font-size: 10px; font-weight: 700; cursor: pointer; }
-        
-        .grid-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .input-box { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 8px; text-align: center; }
-        .label { font-size: 8px; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; font-weight: 600; }
-        .input-val, .stat-val { color: #f8fafc; font-size: 12px; font-weight: 700; }
-        .input-val { background: none; border: none; width: 100%; text-align: center; outline: none; }
+        /* Bố cục Grid 3x2 mới */
+        .grid-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .input-box { background: rgba(0,0,0,0.2); border-radius: 4px; padding: 4px; height: 45px; display: flex; flex-direction: column; justify-content: center; }
+        .label { font-size: 7px; opacity: 0.8; text-transform: uppercase; text-align: center; }
+        .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 11px; width: 100%; outline: none; }
+        .stat-val { font-size: 11px; font-weight: bold; color: #fde047; text-align: center; }
 
-        /* BẢNG SANG TRỌNG */
-        .table-wrap { background: #ffffff; border-radius: 20px; padding: 10px; overflow-x: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        table { width: 100%; border-collapse: collapse; }
-        th { font-size: 9px; color: #64748b; padding: 10px 5px; text-transform: uppercase; text-align: center; border-bottom: 1px solid #f1f5f9; }
-        td { padding: 4px 2px; text-align: center; border-bottom: 1px solid #f8fafc; }
+        .table-wrap { flex: 1; overflow-x: auto; background: white; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid #e5e7eb; }
+        thead { background: #005a9e; color: white; }
+        th { font-size: 9px; font-weight: 700; border: 1px solid #0070c0; padding: 4px 2px; text-transform: uppercase; }
+        tr { height: 24px; }
+        td { border: 1px solid #e5e7eb; padding: 0; text-align: center; }
         
-        .sticky-col { position: sticky; left: 0; background: white; font-weight: 600; font-size: 10px; color: #1e293b; text-align: left; }
-        .hs-col { color: #e11d48; font-weight: 700; font-size: 10px; }
-        .cell-input { width: 100%; height: 28px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; text-align: center; font-size: 10px; font-weight: 600; color: #334155; }
-        .cell-input:focus { border-color: #3b82f6; background: #eff6ff; }
-        .dtqd-col { color: #0f172a; font-weight: 700; font-size: 10px; }
+        .cell-input { width: 100%; height: 22px; border: none; text-align: center; font-size: 8.5px; font-weight: 500; outline: none; }
+        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 10px; border-right: 1px solid #e5e7eb; }
+        .hs-col { font-size: 8.5px; color: #dc2626; font-weight: bold; }
+        .dtqd-col { font-weight: bold; color: #dc2626; font-size: 9px; }
     </style>
 </head>
 <body>
@@ -41,16 +39,17 @@
 <div class="container">
     <div class="header">
         <div class="header-top">
-            <div class="title">BÁO CÁO QUY ĐỔI</div>
-            <button onclick="resetData()" class="btn-reset">XÓA</button>
+            <div style="flex: 1; text-align: center; font-weight: bold; font-size: 13px;">BÁO CÁO QUY ĐỔI</div>
+            <button onclick="resetData()" class="btn-reset-top">Xóa</button>
         </div>
         <div class="grid-header">
             <div class="input-box"><div class="label">Tên NV</div><input type="text" id="nv-name" class="input-val" oninput="saveData()"></div>
-            <div class="input-box"><div class="label">Tổng DT</div><div id="total-rev" class="stat-val">0</div></div>
-            <div class="input-box"><div class="label">Quy đổi</div><div id="h1" class="stat-val">0%</div></div>
+            <div class="input-box"><div class="label">Tổng Doanh Thu</div><div id="total-rev" class="stat-val">0</div></div>
+            <div class="input-box"><div class="label">Quy đổi %</div><div id="h1" class="stat-val">0%</div></div>
+            
             <div class="input-box"><div class="label">Ngày</div><input type="text" id="date-display" class="input-val" oninput="saveData()"></div>
-            <div class="input-box"><div class="label">DT Góp</div><div id="tg-rev" class="stat-val">0</div></div>
-            <div class="input-box"><div class="label">Trả Góp</div><div id="i1" class="stat-val">0%</div></div>
+            <div class="input-box"><div class="label">Tổng DT Góp</div><div id="tg-rev" class="stat-val">0</div></div>
+            <div class="input-box"><div class="label">Trả Góp %</div><div id="i1" class="stat-val">0%</div></div>
         </div>
     </div>
 
@@ -58,7 +57,15 @@
         <table>
             <thead>
                 <tr>
-                    <th>Nhóm</th><th>Hệ số</th><th>SL</th><th>T.Mặt</th><th>T.Góp</th><th>Ví</th><th>DTQĐ</th><th>PMH</th><th>K.thác</th>
+                    <th style="width: 70px;">Nhóm</th>
+                    <th style="width: 40px;">Hệ số</th>
+                    <th style="width: 25px;">SL</th>
+                    <th style="width: 35px;">T.Mặt</th>
+                    <th style="width: 35px;">T.Góp</th>
+                    <th style="width: 35px;">Ví</th>
+                    <th style="width: 45px;">DTQĐ</th>
+                    <th style="width: 45px;">PMH</th>
+                    <th style="width: 55px;">K.thác</th>
                 </tr>
             </thead>
             <tbody id="data-rows"></tbody>
@@ -129,11 +136,9 @@
     };
 
     function resetData() { 
-        if(confirm('Xóa sạch dữ liệu báo cáo?')) {
-            document.querySelectorAll('.data-input').forEach(i => i.value = ''); 
-            localStorage.removeItem('reportData');
-            calc(); 
-        }
+        document.querySelectorAll('.data-input').forEach(i => i.value = ''); 
+        localStorage.removeItem('reportData');
+        calc(); 
     }
 </script>
 </body>
