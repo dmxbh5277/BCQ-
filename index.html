@@ -9,7 +9,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
         body { font-family: 'Google Sans', sans-serif; margin: 0; background: #f3f4f6; touch-action: manipulation; }
-        .container { min-width: 400px; min-height: 100vh; display: flex; flex-direction: column; background: white; padding: 5px; }
+        .container { min-width: 400px; display: flex; flex-direction: column; background: white; padding: 5px; }
         
         .header { background: #0070c0; color: white; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .header-top { display: flex; gap: 8px; align-items: center; position: relative; }
@@ -41,10 +41,10 @@
 <body>
 
 <div class="container" id="capture-area">
-    <div class="header">
+    <div class="header" id="header-part">
         <div class="header-top">
             <div style="flex: 1; text-align: center; font-weight: bold; font-size: 13px;">BÁO CÁO QUY ĐỔI</div>
-            <div class="btn-group">
+            <div class="btn-group" id="btn-group">
                 <button onclick="downloadReport()" class="btn-action btn-capture">Tải Ảnh</button>
                 <button onclick="resetData()" class="btn-action btn-reset-top">Xóa</button>
             </div>
@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <div class="table-wrap">
+    <div class="table-wrap" id="table-part">
         <table>
             <thead>
                 <tr>
@@ -80,7 +80,6 @@
 </div>
 
 <script>
-    // ... (Giữ nguyên phần config và khởi tạo hàng như cũ)
     const config = [
         { n: 'Tivi', hs: 1.0 }, { n: 'Tủ lạnh', hs: 1.0 }, { n: 'Smartphone', hs: 1.0 },
         { n: 'Tablet/Lap', hs: 1.2 }, { n: 'ĐGD/MLN', hs: 1.85 }, { n: 'DCNB', hs: 1.92 },
@@ -103,26 +102,28 @@
         tbody.appendChild(row);
     });
 
-    // Hàm Tải Ảnh
-    function downloadReport() {
-        const btnGroup = document.querySelector('.btn-group');
-        btnGroup.style.display = 'none'; // Ẩn nút trước khi chụp
+    async function downloadReport() {
+        const btnGroup = document.getElementById('btn-group');
+        btnGroup.style.display = 'none';
 
-        html2canvas(document.getElementById('capture-area'), {
-            scale: 2, // Tăng độ nét của ảnh
+        // Chụp cả Header và Table gộp lại
+        const canvas = await html2canvas(document.getElementById('capture-area'), {
+            scale: 3, 
             logging: false,
-            useCORS: true
-        }).then(canvas => {
-            const link = document.createElement('a');
-            const date = document.getElementById('date-display').value || 'baocao';
-            link.download = `BaoCao_${date.replace(/\//g, '-')}.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-            btnGroup.style.display = 'flex'; // Hiện lại nút sau khi xong
+            useCORS: true,
+            windowWidth: document.getElementById('capture-area').scrollWidth,
+            windowHeight: document.getElementById('capture-area').scrollHeight
         });
+
+        const link = document.createElement('a');
+        const date = document.getElementById('date-display').value || 'baocao';
+        link.download = `BaoCao_${date.replace(/\//g, '-')}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        
+        btnGroup.style.display = 'flex';
     }
 
-    // ... (Giữ nguyên các hàm format, calc, saveData, resetData như cũ)
     function format(e) { e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
     function getV(id) { return parseFloat(document.getElementById(id).value.replace(/\./g, "")) || 0; }
     function calc() {
