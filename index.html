@@ -2,128 +2,130 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Báo Cáo Quy Đổi</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
-        body { font-family: 'Google Sans', sans-serif; overflow: hidden; background: #f3f4f6; margin: 0; }
-        .page-container { height: 100dvh; display: flex; flex-direction: column; background: white; }
-        .scroll-area { flex: 1; overflow-y: auto; }
         
-        tr { height: 22px !important; }
-        input { width: 100%; height: 100%; text-align: center; background: transparent; border: none; outline: none; font-size: 11px; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Google Sans', sans-serif; margin: 0; background: #f3f4f6; overflow: hidden; }
         
-        td, th { border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; padding: 0 2px; }
-        td:last-child, th:last-child { border-right: none; }
-        .center-col { text-align: center; }
+        .container { height: 100dvh; display: flex; flex-direction: column; background: white; }
+        
+        /* HEADER */
+        .header { background: #0070c0; color: white; padding: 10px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .header-top { display: flex; gap: 8px; align-items: center; }
+        .input-box { background: rgba(0,0,0,0.2); border-radius: 4px; padding: 4px; flex: 1; height: 35px; display: flex; flex-direction: column; justify-content: center; }
+        .label { font-size: 7px; opacity: 0.8; text-transform: uppercase; text-align: center; font-family: 'Google Sans', sans-serif; }
+        .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 11px; width: 100%; outline: none; font-family: 'Google Sans', sans-serif; }
+        
+        /* TABLE */
+        .table-wrap { flex: 1; overflow: auto; background: white; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 600px; }
+        tr { height: 24px; }
+        th { font-size: 9px; color: #666; background: #f9fafb; border: 1px solid #e5e7eb; padding: 2px; font-family: 'Google Sans', sans-serif; }
+        td { border: 1px solid #e5e7eb; padding: 0; text-align: center; }
+        .cell-input { width: 100%; height: 22px; border: none; text-align: center; font-size: 10px; outline: none; font-family: 'Google Sans', sans-serif; }
+        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 11px; font-family: 'Google Sans', sans-serif; }
+        
+        /* FOOTER */
+        .footer { padding: 8px; border-top: 1px solid #eee; }
+        .btn-reset { width: 100%; padding: 8px; background: #ef4444; color: white; border: none; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; font-family: 'Google Sans', sans-serif; }
     </style>
 </head>
 <body>
 
-    <div id="report-area" class="page-container max-w-md mx-auto shadow-xl">
-        <div style="background: #0070c0; color: white; padding: 8px;">
-            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                <div style="width: 30%; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px;">
-                    <span style="font-size: 7px; opacity: 0.7; display: block; text-align: center;">NV</span>
-                    <input type="text" id="nv-name" style="color: #fde047; font-weight: bold; font-size: 10px;" placeholder="...">
-                </div>
-                <div style="flex: 1; text-align: center; font-weight: bold; font-size: 12px; text-transform: uppercase;">Báo Cáo Quy Đổi</div>
+<div class="container">
+    <div class="header">
+        <div class="header-top">
+            <div class="input-box">
+                <div class="label">Nhân Viên</div>
+                <input type="text" id="nv-name" class="input-val" placeholder="...">
             </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-                <div style="background: rgba(0,0,0,0.1); border-radius: 4px; padding: 2px; text-align: center;">
-                    <span style="font-size: 8px;">Ngày</span><br>
-                    <input type="text" id="date-display" value="16/07" style="color: white; font-weight: bold; font-size: 10px;">
-                </div>
-                <div style="background: rgba(0,0,0,0.1); border-radius: 4px; padding: 2px; text-align: center;">
-                    <span style="font-size: 8px;">Quy đổi</span><div id="h1" style="font-weight: bold; color: #fde047; font-size: 11px;">0%</div>
-                </div>
-                <div style="background: rgba(0,0,0,0.1); border-radius: 4px; padding: 2px; text-align: center;">
-                    <span style="font-size: 8px;">Trả chậm</span><div id="i1" style="font-weight: bold; color: #fde047; font-size: 11px;">0%</div>
-                </div>
+            <div style="flex: 1; text-align: center; font-weight: bold; font-size: 13px;">BÁO CÁO QUY ĐỔI</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <div class="input-box">
+                <div class="label">Ngày</div>
+                <input type="text" value="16/07" class="input-val" style="color:white">
             </div>
-        </div>
-
-        <div style="padding: 4px; border-bottom: 1px solid #ddd; display: flex; gap: 4px;">
-            <button onclick="resetData()" style="flex: 1; padding: 4px; background: #eee; border: none; font-size: 10px; font-weight: bold; text-transform: uppercase;">Xóa Dữ Liệu</button>
-            <button id="btn-capture" style="flex: 1; padding: 4px; background: #0070c0; color: white; border: none; font-size: 10px; font-weight: bold; text-transform: uppercase;">Chụp Báo Cáo</button>
-        </div>
-
-        <div class="scroll-area" id="table-container">
-            <table style="width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 650px;">
-                <thead style="background: #f9fafb; font-size: 9px; color: #666; text-transform: uppercase;">
-                    <tr>
-                        <th style="width: 80px; text-align: left; padding-left: 4px;">Nhóm</th>
-                        <th style="width: 40px;">Hệ số</th>
-                        <th style="width: 32px;">SL</th>
-                        <th style="width: 56px;">T.mặt</th>
-                        <th style="width: 56px;">T.Góp</th>
-                        <th style="width: 56px;">Ví</th>
-                        <th style="width: 56px;">DTQĐ</th>
-                        <th style="width: 48px;">PMH</th>
-                        <th style="width: 80px;">Khai thác</th>
-                    </tr>
-                </thead>
-                <tbody id="data-rows" style="font-size: 10px; color: #333;"></tbody>
-            </table>
+            <div class="input-box">
+                <div class="label">Quy đổi</div>
+                <div id="h1" class="input-val" style="color:#fde047">0%</div>
+            </div>
+            <div class="input-box">
+                <div class="label">Trả chậm</div>
+                <div id="i1" class="input-val" style="color:#fde047">0%</div>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-        // (Giữ nguyên logic config và calc như cũ...)
-        const config = [
-            { n: 'Tivi', hs: 1.0 }, { n: 'Tủ lạnh', hs: 1.0 }, { n: 'Smartphone', hs: 1.0 },
-            { n: 'Tablet/Laptop', hs: 1.2 }, { n: 'ĐGD/MLN', hs: 1.85 }, { n: 'DCNB', hs: 1.92 },
-            { n: 'VAS', hs: 3.3 }, { n: 'Bảo hiểm', hs: 4.18 }, { n: 'Sim', hs: 5.45 },
-            { n: 'Phụ kiện', hs: 3.37 }, { n: 'Đồng hồ', hs: 3.0 }, { n: 'Loa Karaoke', hs: 1.29 }
-        ];
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 70px;">Nhóm</th>
+                    <th style="width: 40px;">Hệ số</th>
+                    <th style="width: 30px;">SL</th>
+                    <th style="width: 50px;">T.Mặt</th>
+                    <th style="width: 50px;">T.Góp</th>
+                    <th style="width: 50px;">Ví</th>
+                    <th style="width: 50px;">DTQĐ</th>
+                    <th style="width: 40px;">PMH</th>
+                    <th style="width: 70px;">Khai thác</th>
+                </tr>
+            </thead>
+            <tbody id="data-rows"></tbody>
+        </table>
+    </div>
 
-        const tbody = document.getElementById('data-rows');
+    <div class="footer">
+        <button onclick="resetData()" class="btn-reset">Xóa toàn bộ dữ liệu</button>
+    </div>
+</div>
+
+<script>
+    const config = [
+        { n: 'Tivi', hs: 1.0 }, { n: 'Tủ lạnh', hs: 1.0 }, { n: 'Smartphone', hs: 1.0 },
+        { n: 'Tablet/Lap', hs: 1.2 }, { n: 'ĐGD/MLN', hs: 1.85 }, { n: 'DCNB', hs: 1.92 },
+        { n: 'VAS', hs: 3.3 }, { n: 'Bảo hiểm', hs: 4.18 }, { n: 'Sim', hs: 5.45 },
+        { n: 'Phụ kiện', hs: 3.37 }, { n: 'Đồng hồ', hs: 3.0 }, { n: 'Loa Kara', hs: 1.29 }
+    ];
+
+    const tbody = document.getElementById('data-rows');
+    config.forEach((item, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td class="sticky-col">${item.n}</td>
+            <td style="font-size:10px;">${Math.round(item.hs * 100)}%</td>
+            <td><input type="text" class="cell-input data-input text-red-600 font-bold" oninput="format(this); calc();"></td>
+            <td><input type="text" id="d-${i}" class="cell-input data-input" oninput="format(this); calc();"></td>
+            <td><input type="text" id="e-${i}" class="cell-input data-input" oninput="format(this); calc();"></td>
+            <td><input type="text" id="f-${i}" class="cell-input data-input" oninput="format(this); calc();"></td>
+            <td id="g-${i}" style="font-weight:bold; color:#0070c0; font-size:10px;"></td>
+            <td><input type="text" class="cell-input data-input"></td>
+            <td><input type="text" class="cell-input data-input"></td>`;
+        tbody.appendChild(row);
+    });
+
+    function format(e) { e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+    function getV(id) { return parseFloat(document.getElementById(id).value.replace(/\./g, "")) || 0; }
+    
+    function calc() {
+        let sDF = 0, sEF = 0, sG = 0;
         config.forEach((item, i) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td style="font-weight: bold; padding-left: 4px;">${item.n}</td>
-                <td class="center-col">${Math.round(item.hs * 100)}%</td>
-                <td class="p-0"><input type="text" class="data-input" oninput="format(this); calc();"></td>
-                <td class="p-0"><input type="text" id="d-${i}" class="data-input" oninput="format(this); calc();"></td>
-                <td class="p-0"><input type="text" id="e-${i}" class="data-input" oninput="format(this); calc();"></td>
-                <td class="p-0"><input type="text" id="f-${i}" class="data-input" oninput="format(this); calc();"></td>
-                <td id="g-${i}" class="center-col font-bold" style="color: #0070c0;"></td>
-                <td class="p-0"><input type="text" class="data-input"></td>
-                <td class="p-0"><input type="text" class="data-input"></td>`;
-            tbody.appendChild(row);
+            const d = getV(`d-${i}`), e = getV(`e-${i}`), f = getV(`f-${i}`);
+            const df = d + e + f, ef = e + f;
+            if(df > 0) {
+                const g = (df * item.hs) + (ef * 0.3);
+                document.getElementById(`g-${i}`).innerText = Math.round(g).toLocaleString('vi-VN');
+                sG += g; sDF += df; sEF += ef;
+            } else document.getElementById(`g-${i}`).innerText = '';
         });
+        document.getElementById('h1').innerText = sDF ? Math.round(sEF/sDF*100) + '%' : '0%';
+        document.getElementById('i1').innerText = sDF ? Math.round((sG-sDF)/sDF*100) + '%' : '0%';
+    }
 
-        // Hàm chụp ảnh chuyên sâu
-        document.getElementById('btn-capture').addEventListener('click', async function() {
-            const el = document.getElementById('report-area');
-            const tableContainer = document.getElementById('table-container');
-            
-            // 1. Lưu trạng thái cũ
-            const oldHeight = tableContainer.style.height;
-            const oldOverflow = tableContainer.style.overflow;
-            
-            // 2. Ép mở rộng để chụp toàn bộ
-            tableContainer.style.height = 'auto';
-            tableContainer.style.overflow = 'visible';
-
-            // 3. Chụp
-            const canvas = await html2canvas(el, { scale: 2, logging: false });
-            
-            // 4. Trả lại trạng thái cũ
-            tableContainer.style.height = oldHeight;
-            tableContainer.style.overflow = oldOverflow;
-
-            // 5. Download
-            const link = document.createElement('a');
-            link.download = 'Bao-Cao-Quy-Doi.png';
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-        });
-
-        function format(e) { e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-        function getV(id) { return parseFloat(document.getElementById(id).value.replace(/\./g, "")) || 0; }
-        function calc() { /* Giữ nguyên logic tính toán của bạn */ }
-        function resetData() { document.querySelectorAll('.data-input').forEach(i => i.value = ''); calc(); }
-    </script>
+    function resetData() { document.querySelectorAll('.data-input').forEach(i => i.value = ''); calc(); }
+</script>
 </body>
 </html>
