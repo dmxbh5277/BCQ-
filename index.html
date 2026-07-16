@@ -1,216 +1,199 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Báo Cáo Doanh Số Độc Lập</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  
-  <style>
-    body { background-color: #f4f6f9; font-size: 14px; padding-bottom: 160px; }
-    .header-panel { background: linear-gradient(135deg, #0056b3, #007bff); color: white; padding: 15px; border-radius: 0 0 15px 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .card-item { background: white; border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #007bff; }
-    .nhom-title { font-weight: bold; color: #333; font-size: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .he-so-badge { background-color: #e9ecef; color: #495057; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    
-    /* Grid nhập liệu 4 ô trên 1 dòng */
-    .input-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; }
-    .input-box { text-align: center; padding: 6px; font-size: 13px; }
-    .input-label { font-size: 11px; color: #6c757d; text-align: center; margin-bottom: 2px; font-weight: 600; }
-    
-    /* Dòng hiển thị kết quả G3 (DTQĐ) riêng cho từng nhóm */
-    .result-row { font-size: 12px; font-weight: bold; color: #28a745; text-align: right; background: #f8f9fa; padding: 4px 8px; border-radius: 5px; }
-
-    /* Thanh kết quả tổng hợp cố định dưới màn hình mobile */
-    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; box-shadow: 0 -4px 10px rgba(0,0,0,0.1); padding: 10px 15px; z-index: 1000; border-radius: 15px 15px 0 0; }
-    .summary-box { display: flex; justify-content: space-between; margin-bottom: 10px; padding: 5px 0; border-bottom: 1px solid #eee; }
-    .summary-item { text-align: center; flex: 1; }
-    .summary-value { font-size: 16px; font-weight: bold; color: #007bff; }
-    .btn-action { border-radius: 8px; padding: 10px; font-weight: bold; width: 100%; }
-    
-    #captureArea { padding: 5px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Quy Đổi - Trả Chậm</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        /* Ẩn hoàn toàn mũi tên tăng giảm của input number trên mọi trình duyệt mobile */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-50 font-sans antialiased text-sm select-none">
 
-  <div class="container-fluid px-2">
-    <div id="captureArea">
-      <div class="header-panel">
-        <h5 class="text-center mb-3 fw-bold">BÁO CÁO QUY ĐỔI - TRẢ CHẬM</h5>
-        <div class="row g-2">
-          <div class="col-6">
-            <label class="form-label small fw-bold text-white-50 m-0">TÊN NV</label>
-            <input type="text" id="inputTenNV" class="form-control form-control-sm" placeholder="Nhập tên...">
-          </div>
-          <div class="col-6">
-            <label class="form-label small fw-bold text-white-50 m-0">NGÀY</label>
-            <input type="date" id="inputNgay" class="form-control form-control-sm">
-          </div>
+    <div class="max-w-md mx-auto bg-white min-h-screen shadow-md flex flex-col">
+        
+        <div class="bg-[#0070c0] text-white p-4 sticky top-0 z-20 shadow-sm">
+            <div class="text-center font-bold text-base uppercase tracking-wider mb-3">
+                Báo Cáo Quy Đổi - Trả Chậm
+            </div>
+            
+            <div class="grid grid-cols-3 gap-3 pt-2 border-t border-blue-400/30">
+                <div class="flex flex-col justify-center">
+                    <span class="text-blue-200 text-[10px] uppercase font-medium">Ngày áp dụng</span>
+                    <input type="date" id="cell-b1" class="w-full bg-blue-800 text-white rounded px-1 py-1 mt-0.5 border border-blue-600 focus:outline-none text-xs text-center font-semibold">
+                </div>
+                <div class="flex flex-col items-center bg-blue-900/50 rounded p-1.5 border border-blue-700/50">
+                    <span class="text-blue-200 text-[10px] uppercase font-medium">Quy đổi (H1)</span>
+                    <div id="cell-h1" class="text-xl font-black text-yellow-300 tracking-tight mt-0.5">
+                        0%
+                    </div>
+                </div>
+                <div class="flex flex-col items-center bg-blue-900/50 rounded p-1.5 border border-blue-700/50">
+                    <span class="text-blue-200 text-[10px] uppercase font-medium">Trả chậm (I1)</span>
+                    <div id="cell-i1" class="text-xl font-black text-yellow-300 tracking-tight mt-0.5">
+                        0%
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <div id="dynamicForm"></div>
+        <div class="flex-1 overflow-x-auto relative">
+            <table class="w-full text-left border-collapse table-fixed min-w-[690px]">
+                <thead>
+                    <tr class="bg-[#fce4d6] text-gray-800 font-bold text-center border-b border-gray-300 sticky top-[118px] z-10">
+                        <th class="w-24 px-2 py-2.5 bg-[#fce4d6] sticky left-0 border-r border-gray-200 z-10">Nhóm</th>
+                        <th class="w-14 px-1 py-2.5 border-r border-gray-200">Hệ số</th>
+                        <th class="w-12 px-1 py-2.5 border-r border-gray-200 text-red-600">SL</th>
+                        <th class="w-16 px-1 py-2.5 border-r border-gray-200">T. mặt</th>
+                        <th class="w-16 px-1 py-2.5 border-r border-gray-200">T. Góp</th>
+                        <th class="w-16 px-1 py-2.5 border-r border-gray-200">Ví</th>
+                        <th class="w-16 px-1 py-2.5 border-r border-gray-200 text-blue-700">DTQĐ</th>
+                        <th class="w-16 px-1 py-2.5 border-r border-gray-200">PMH</th>
+                        <th class="w-24 px-2 py-2.5">Khai thác</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body" class="divide-y divide-gray-200">
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="p-3 bg-gray-50 border-t border-gray-200 sticky bottom-0 flex gap-2 z-20">
+            <button type="button" onclick="resetForm()" class="flex-1 bg-gray-200 text-gray-700 py-2.5 rounded-lg font-medium active:bg-gray-300">
+                Xóa nhập liệu
+            </button>
+            <button type="button" class="flex-1 bg-[#0070c0] text-white py-2.5 rounded-lg font-medium active:bg-blue-700">
+                Lưu dữ liệu
+            </button>
+        </div>
+
     </div>
-  </div>
 
-  <div class="bottom-bar">
-    <div class="summary-box">
-      <div class="summary-item" style="border-right: 1px solid #eee;">
-        <div class="small text-muted fw-bold">TRẢ CHẬM (H1)</div>
-        <div class="summary-value" id="totalH1">0%</div>
-      </div>
-      <div class="summary-item">
-        <div class="small text-muted fw-bold">QUY ĐỔI (i1)</div>
-        <div class="summary-value" id="totalI1">0%</div>
-      </div>
-    </div>
-    <div class="px-1">
-      <button type="button" class="btn btn-primary btn-action" onclick="captureReport()">CAP BÁO CÁO</button>
-    </div>
-  </div>
+    <script>
+        // Cấu hình danh sách nhóm hàng (Dòng 3 -> 16)
+        const danhSachNhom = [
+            { ten: 'Tivi', heSo: 1.00 },
+            { ten: 'Tủ lạnh', heSo: 1.00 },
+            { ten: 'Máy lạnh', heSo: 1.00 },
+            { ten: 'Máy giặt', heSo: 1.00 },
+            { ten: 'Smartphone', heSo: 1.00 },
+            { ten: 'Tablet/Laptop', heSo: 1.20 },
+            { ten: 'ĐGD/MLN', heSo: 1.85 },
+            { ten: 'DCNB', heSo: 1.92 },
+            { ten: 'VAS', heSo: 3.30 },
+            { ten: 'Bảo hiểm', heSo: 4.18 },
+            { ten: 'Sim', heSo: 5.45 },
+            { ten: 'Phụ kiện', heSo: 3.37 },
+            { ten: 'Đồng hồ', heSo: 3.00 },
+            { ten: 'Loa Karaoke', heSo: 1.29 }
+        ];
 
-  <script>
-    // 1. Khai báo danh sách cấu hình Nhóm và Hệ số giống hệt như ảnh của bạn
-    const catalogData = [
-      { nhom: "Tivi", heSo: 1.00 },
-      { nhom: "Tủ lạnh", heSo: 1.00 },
-      { nhom: "Máy lạnh", heSo: 1.00 },
-      { nhom: "Máy giặt", heSo: 1.00 },
-      { nhom: "Smartphone", heSo: 1.00 },
-      { nhom: "Tablet/Laptop", heSo: 1.20 },
-      { nhom: "ĐGD/MLN", heSo: 1.85 },
-      { nhom: "DCNB", heSo: 1.92 },
-      { nhom: "VAS", heSo: 3.30 },
-      { nhom: "Bảo hiểm", heSo: 4.18 },
-      { nhom: "Sim", heSo: 5.45 },
-      { nhom: "Phụ kiện", heSo: 3.37 },
-      { nhom: "Đồng hồ", heSo: 3.00 },
-      { nhom: "Loa Karaoke", heSo: 1.29 }
-    ];
+        // 1. TỰ ĐỘNG THIẾT LẬP NGÀY HIỆN TẠI CHO Ô B1
+        const inputB1 = document.getElementById('cell-b1');
+        const homNay = new Date();
+        const nam = homNay.getFullYear();
+        const thang = String(homNay.getMonth() + 1).padStart(2, '0');
+        const ngay = String(homNay.getDate()).padStart(2, '0');
+        inputB1.value = `${nam}-${thang}-${ngay}`;
 
-    // Khởi tạo form khi tải trang
-    document.addEventListener("DOMContentLoaded", function() {
-      // Tự động chọn ngày hôm nay
-      document.getElementById('inputNgay').value = new Date().toISOString().substring(0, 10);
-      
-      const container = document.getElementById('dynamicForm');
-      container.innerHTML = "";
+        // 2. RENDER BẢNG DỮ LIỆU
+        const tbody = document.getElementById('table-body');
+        danhSachNhom.forEach((nhom, index) => {
+            const rowIdx = index + 3;
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-gray-50/50";
+            tr.innerHTML = `
+                <td class="px-2 py-2 bg-white font-medium text-gray-950 border-r border-gray-100 sticky left-0 z-5 shadow-[1px_0_3px_rgba(0,0,0,0.05)]">
+                    ${nhom.ten}
+                </td>
+                <td class="px-1 py-2 text-center text-gray-600 border-r border-gray-100 text-xs font-semibold">
+                    ${Math.round(nhom.heSo * 100)}%
+                </td>
+                <td class="p-0.5 border-r border-gray-100">
+                    <input type="number" inputmode="numeric" class="w-full text-center bg-transparent text-red-600 font-bold py-1.5 focus:outline-none">
+                </td>
+                <td class="p-0.5 border-r border-gray-100">
+                    <input type="number" inputmode="numeric" id="d-${rowIdx}" oninput="tinhToanBaoCao()" class="w-full text-center bg-transparent py-1.5 focus:bg-blue-50/50 focus:outline-none">
+                </td>
+                <td class="p-0.5 border-r border-gray-100">
+                    <input type="number" inputmode="numeric" id="e-${rowIdx}" oninput="tinhToanBaoCao()" class="w-full text-center bg-transparent py-1.5 focus:bg-blue-50/50 focus:outline-none">
+                </td>
+                <td class="p-0.5 border-r border-gray-100">
+                    <input type="number" inputmode="numeric" id="f-${rowIdx}" oninput="tinhToanBaoCao()" class="w-full text-center bg-transparent py-1.5 focus:bg-blue-50/50 focus:outline-none">
+                </td>
+                <td class="p-0.5 border-r border-gray-100 text-center font-bold text-blue-700 bg-gray-50/50" id="g-${rowIdx}">
+                    
+                </td>
+                <td class="p-0.5 border-r border-gray-100">
+                    <input type="text" class="w-full text-center bg-transparent py-1.5 text-xs focus:outline-none">
+                </td>
+                <td class="p-0.5">
+                    <input type="text" class="w-full text-left bg-transparent py-1.5 text-xs px-1 focus:outline-none">
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
 
-      catalogData.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'card-item';
-        card.setAttribute('data-index', index);
-        
-        card.innerHTML = `
-          <div class="nhom-title">
-            <span>${item.nhom}</span>
-            <span class="he-so-badge">Hệ số: ${Math.round(item.heSo * 100)}%</span>
-          </div>
-          <div class="input-grid">
-            <div>
-              <div class="input-label text-danger">SL</div>
-              <input type="number" class="form-control input-box field-sl" placeholder="0" inputmode="numeric" oninput="calculateRow(${index})">
-            </div>
-            <div>
-              <div class="input-label">T. mặt</div>
-              <input type="number" class="form-control input-box field-tmat" placeholder="0" inputmode="numeric" oninput="calculateRow(${index})">
-            </div>
-            <div>
-              <div class="input-label">T. Góp</div>
-              <input type="number" class="form-control input-box field-tgop" placeholder="0" inputmode="numeric" oninput="calculateRow(${index})">
-            </div>
-            <div>
-              <div class="input-label">Ví</div>
-              <input type="number" class="form-control input-box field-vi" placeholder="0" inputmode="numeric" oninput="calculateRow(${index})">
-            </div>
-          </div>
-          <div class="result-row">
-            DTQĐ (G3): <span class="val-g3">0</span>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    });
+        // 3. HÀM TỰ ĐỘNG TÍNH TOÁN THEO CÔNG THỨC EXCEL
+        function tinhToanBaoCao() {
+            let tongD_F = 0;
+            let tongE_F = 0;
+            let tongG = 0;
 
-    // 2. Hàm tính toán tự động realtime khi nhân viên gõ số
-    function calculateRow(index) {
-      const cards = document.querySelectorAll('.card-item');
-      
-      let totalSumD_F = 0; // Tổng (D3:F16) -> Tổng của tất cả các ô T.mặt, T.góp, Ví của tất cả các hàng
-      let totalSumE_F = 0; // Tổng (E3:F16) -> Tổng của tất cả các ô T.góp, Ví của tất cả các hàng
-      let totalSumG = 0;   // Tổng (G3:G16) -> Tổng DTQĐ của tất cả các hàng
+            danhSachNhom.forEach((nhom, index) => {
+                const rowIdx = index + 3;
+                
+                const d = parseFloat(document.getElementById(`d-${rowIdx}`).value) || 0;
+                const e = parseFloat(document.getElementById(`e-${rowIdx}`).value) || 0;
+                const f = parseFloat(document.getElementById(`f-${rowIdx}`).value) || 0;
 
-      cards.forEach((card, idx) => {
-        const heSo = catalogData[idx].heSo;
-        
-        const sl = parseFloat(card.querySelector('.field-sl').value) || 0;
-        const tMat = parseFloat(card.querySelector('.field-tmat').value) || 0;
-        const tGop = parseFloat(card.querySelector('.field-tgop').value) || 0;
-        const vi = parseFloat(card.querySelector('.field-vi').value) || 0;
+                const sumD_F = d + e + f;
+                const sumE_F = e + f;
+                
+                // Nếu hàng này có nhập dữ liệu mới tính toán cột G
+                if (sumD_F > 0) {
+                    const gValue = (sumD_F * nhom.heSo) + (sumE_F * 0.3);
+                    document.getElementById(`g-${rowIdx}`).innerText = gValue.toFixed(1).replace('.0', '');
+                    tongG += gValue;
+                } else {
+                    document.getElementById(`g-${rowIdx}`).innerText = '';
+                }
 
-        // --- CÔNG THỨC Ô G3 CHO TỪNG DÒNG ---
-        // G3 = SUM(D3:F3) * B3 + SUM(E3:F3) * 30%
-        // Trong đó: D3=tMat, E3=tGop, F3=vi, B3=heSo
-        const sumD3_F3 = tMat + tGop + vi;
-        const sumE3_F3 = tGop + vi;
-        const g3 = (sumD3_F3 * heSo) + (sumE3_F3 * 0.3);
-        
-        // Hiển thị kết quả G3 ngay tại dòng đó (làm tròn 2 chữ số thập phân)
-        card.querySelector('.val-g3').innerText = Number(g3.toFixed(2));
+                tongD_F += sumD_F;
+                tongE_F += sumE_F;
+            });
 
-        // Tích lũy để tính toán cho H1 và i1 toàn bảng
-        totalSumD_F += sumD3_F3;
-        totalSumE_F += sumE3_F3;
-        totalSumG += g3;
-      });
+            // Tính Ô H1 lớn ở Header
+            const h1Element = document.getElementById('cell-h1');
+            if (tongD_F > 0) {
+                h1Element.innerText = ((tongE_F / tongD_F) * 100).toFixed(0) + '%';
+            } else {
+                h1Element.innerText = '0%';
+            }
 
-      // --- CÔNG THỨC Ô H1 (TRẢ CHẬM) ---
-      // H1 = SUM($E$3:$F$16) / SUM($D$3:$F$16)
-      let h1 = 0;
-      if (totalSumD_F > 0) {
-        h1 = totalSumE_F / totalSumD_F;
-      }
-      document.getElementById('totalH1').innerText = (h1 * 100).toFixed(1) + "%";
+            // Tính Ô I1 lớn ở Header
+            const i1Element = document.getElementById('cell-i1');
+            if (tongD_F > 0) {
+                i1Element.innerText = (((tongG - tongD_F) / tongD_F) * 100).toFixed(0) + '%';
+            } else {
+                i1Element.innerText = '0%';
+            }
+        }
 
-      // --- CÔNG THỨC Ô i1 (QUY ĐỔI) ---
-      // i1 = (SUM($G$3:$G$16) - SUM($D$3:$F$16)) / SUM($D$3:$F$16)
-      let i1 = 0;
-      if (totalSumD_F > 0) {
-        i1 = (totalSumG - totalSumD_F) / totalSumD_F;
-      }
-      document.getElementById('totalI1').innerText = (i1 * 100).toFixed(1) + "%";
-    }
-
-    // 3. Xử lý chức năng nút "Cap" chụp nhanh màn hình báo cáo
-    function captureReport() {
-      const captureArea = document.getElementById('captureArea');
-      
-      // Sử dụng html2canvas để kết xuất vùng nhập liệu thành ảnh PNG
-      html2canvas(captureArea, {
-        useCORS: true,
-        scale: 2, // Nhân đôi độ phân giải để ảnh chụp rõ nét hơn trên điện thoại
-        backgroundColor: "#f4f6f9"
-      }).then(canvas => {
-        const image = canvas.toDataURL("image/png");
-        
-        // Tạo liên kết tải ảnh xuống thiết bị
-        const link = document.createElement('a');
-        const tenNV = document.getElementById('inputTenNV').value || 'NhanVien';
-        const ngay = document.getElementById('inputNgay').value || 'BaoCao';
-        
-        link.download = `BC_${formatName(tenNV)}_${ngay}.png`;
-        link.href = image;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
-    }
-
-    // Hàm bỏ dấu tiếng Việt để đặt tên file ảnh không lỗi
-    function formatName(str) {
-      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
-    }
-  </script>
+        // 4. HÀM XOÁ DỮ LIỆU
+        function resetForm() {
+            const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
+            inputs.forEach(input => input.value = '');
+            tinhToanBaoCao();
+        }
+    </script>
 </body>
 </html>
