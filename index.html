@@ -1,457 +1,216 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng Quản Lý Chỉ Tiêu Kinh Doanh</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
-        
-        * {
-            box-sizing: border-box;
-            font-family: 'Google Sans', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Báo Cáo Doanh Số Độc Lập</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  
+  <style>
+    body { background-color: #f4f6f9; font-size: 14px; padding-bottom: 160px; }
+    .header-panel { background: linear-gradient(135deg, #0056b3, #007bff); color: white; padding: 15px; border-radius: 0 0 15px 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .card-item { background: white; border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #007bff; }
+    .nhom-title { font-weight: bold; color: #333; font-size: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .he-so-badge { background-color: #e9ecef; color: #495057; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    
+    /* Grid nhập liệu 4 ô trên 1 dòng */
+    .input-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; }
+    .input-box { text-align: center; padding: 6px; font-size: 13px; }
+    .input-label { font-size: 11px; color: #6c757d; text-align: center; margin-bottom: 2px; font-weight: 600; }
+    
+    /* Dòng hiển thị kết quả G3 (DTQĐ) riêng cho từng nhóm */
+    .result-row { font-size: 12px; font-weight: bold; color: #28a745; text-align: right; background: #f8f9fa; padding: 4px 8px; border-radius: 5px; }
 
-        body {
-            background-color: #f7f9fc;
-            margin: 0;
-            padding: 8px;
-            display: flex;
-            justify-content: center;
-        }
-
-        /* Khung chứa bảng hỗ trợ cuộn ngang trên điện thoại */
-        .table-container {
-            width: 100%;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            border: 1px solid #dcdcdc;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: center;
-            font-size: 16px; 
-            min-width: 850px;
-        }
-
-        th, td {
-            border: 1px solid #c8c8c8;
-            padding: 14px 10px;
-            vertical-align: middle;
-        }
-
-        /* Định dạng dòng tiêu đề lớn CT8 */
-        .header-ct8 {
-            background-color: #1a535c;
-            color: #ffffff;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            padding: 16px;
-        }
-
-        /* Dòng header phụ chứa Mục tiêu và CT6/CT7 */
-        .subheader-row {
-            font-weight: 700;
-            font-size: 16px;
-        }
-        
-        .cell-target {
-            color: #d9381e;
-            background-color: #fff5f5;
-            text-align: left;
-            padding-left: 15px;
-        }
-        
-        .cell-ratio-label {
-            background-color: #ffcc00;
-            color: #333333;
-        }
-        
-        .cell-ct6 {
-            background-color: #ffeae6;
-            color: #d9381e;
-            font-size: 20px;
-        }
-
-        .cell-ct7 {
-            background-color: #3a86c8;
-            color: #ffffff;
-            font-size: 20px;
-        }
-
-        /* Hàng chứa mã công thức CT1 -> CT5 */
-        .ct-code-row th {
-            font-weight: 700;
-            font-size: 16px;
-            padding: 12px 5px;
-        }
-        
-        .bg-ct1 { background-color: #a8dadc; color: #1d3557; }
-        .bg-ct2 { background-color: #457b9d; color: #ffffff; }
-        .bg-ct3 { background-color: #e9c46a; color: #1d3557; }
-        .bg-ct4 { background-color: #f4a261; color: #ffffff; }
-        .bg-ct5 { background-color: #e76f51; color: #ffffff; padding: 0 !important; }
-
-        /* Ô nhập liệu riêng cho CT5 trên header */
-        .bg-ct5 input {
-            width: 100%;
-            height: 45px;
-            border: none;
-            outline: none;
-            background: transparent;
-            color: #ffffff;
-            text-align: center;
-            font-size: 16px;
-            font-weight: 700;
-        }
-        .bg-ct5 input::placeholder {
-            color: #f5c2b5;
-        }
-
-        /* Tiêu đề cột chính STT, Nhóm, Hệ số... */
-        .column-title th {
-            background-color: #f1f3f5;
-            color: #333333;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .text-red {
-            color: #d9381e;
-            font-weight: 700;
-        }
-
-        /* Cấu hình các dòng dữ liệu */
-        tbody tr:nth-child(even) {
-            background-color: #fcfdfe;
-        }
-
-        tbody tr:active {
-            background-color: #e8f0fe;
-        }
-
-        .col-stt { width: 45px; color: #666666; font-weight: bold; }
-        .col-nhom { min-width: 130px; text-align: left; padding-left: 15px; font-weight: 700; color: #111111; }
-        .col-heso { width: 75px; font-weight: 500; color: #444444; }
-        
-        /* Ô nhập liệu kích thước lớn, vừa vặn ô */
-        .input-cell {
-            background-color: #ffffff;
-            padding: 4px;
-        }
-        
-        .input-cell input {
-            width: 100%;
-            height: 38px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-            outline: none;
-            text-align: center;
-            font-size: 17px;
-            font-weight: 500;
-            color: #222222;
-            background: transparent;
-        }
-
-        .input-cell input:focus {
-            background-color: #f0f7ff;
-            border-color: #3a86c8;
-        }
-
-        .col-dtqd {
-            background-color: #f8f9fa;
-            font-weight: 700;
-            color: #222222;
-            font-size: 17px;
-        }
-    </style>
+    /* Thanh kết quả tổng hợp cố định dưới màn hình mobile */
+    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; box-shadow: 0 -4px 10px rgba(0,0,0,0.1); padding: 10px 15px; z-index: 1000; border-radius: 15px 15px 0 0; }
+    .summary-box { display: flex; justify-content: space-between; margin-bottom: 10px; padding: 5px 0; border-bottom: 1px solid #eee; }
+    .summary-item { text-align: center; flex: 1; }
+    .summary-value { font-size: 16px; font-weight: bold; color: #007bff; }
+    .btn-action { border-radius: 8px; padding: 10px; font-weight: bold; width: 100%; }
+    
+    #captureArea { padding: 5px; }
+  </style>
 </head>
 <body>
 
-<div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th colspan="10" class="header-ct8">CT8</th>
-            </tr>
-            <tr class="subheader-row">
-                <th colspan="3" class="cell-target">Mục tiêu QUY ĐỔI: 50%, TRẢ GÓP: 60%</th>
-                <th colspan="2" class="cell-ratio-label">Tỷ trọng Trả góp</th>
-                <th colspan="5" id="sum-ct6" class="cell-ct6">CT6: 0%</th>
-            </tr>
-            <tr class="subheader-row">
-                <th colspan="5" style="border: none; background: #fff; height: 0; padding: 0;"></th>
-                <th colspan="5" id="sum-ct7" class="cell-ct7">CT7: 0%</th>
-            </tr>
-            <tr class="ct-code-row">
-                <th colspan="3" style="background-color: #f1f3f5; border-bottom: none;"></th>
-                <th id="sum-ct1" class="bg-ct1">0</th>
-                <th id="sum-ct2" class="bg-ct2">0</th>
-                <th id="sum-ct3" class="bg-ct3">0</th>
-                <th id="sum-ct4" class="bg-ct4">0</th>
-                <th class="bg-ct5"><input type="text" inputmode="numeric" id="input-ct5" placeholder="Nhập CT5"></th>
-                <th colspan="2" style="background-color: #f1f3f5; border-bottom: none;"></th>
-            </tr>
-            <tr class="column-title">
-                <th class="col-stt">STT</th>
-                <th class="col-nhom">Nhóm</th>
-                <th class="col-heso">Hệ số</th>
-                <th class="text-red">SL</th>
-                <th>T. mặt</th>
-                <th>T. Góp</th>
-                <th>Ví</th>
-                <th>DTQĐ</th>
-                <th>PMH</th>
-                <th>Khai thác</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr data-heso="1.0">
-                <td class="col-stt">1</td><td class="col-nhom">Tivi</td><td class="col-heso">100%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="1.0">
-                <td class="col-stt">2</td><td class="col-nhom">Tủ lạnh</td><td class="col-heso">100%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="1.0">
-                <td class="col-stt">3</td><td class="col-nhom">Máy lạnh</td><td class="col-heso">100%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="1.0">
-                <td class="col-stt">4</td><td class="col-nhom">Máy giặt</td><td class="col-heso">100%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="1.0">
-                <td class="col-stt">5</td><td class="col-nhom">Smartphone</td><td class="col-heso">100%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="1.2">
-                <td class="col-stt">6</td><td class="col-nhom">Tablet/Laptop</td><td class="col-heso">120%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="1.85">
-                <td class="col-stt">9</td><td class="col-nhom">ĐGD/MLN</td><td class="col-heso">185%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="1.92">
-                <td class="col-stt">10</td><td class="col-nhom">ĐCNB</td><td class="col-heso">192%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="3.3">
-                <td class="col-stt">11</td><td class="col-nhom">VAS</td><td class="col-heso">330%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="4.18">
-                <td class="col-stt">12</td><td class="col-nhom">Bảo hiểm</td><td class="col-heso">418%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="5.45">
-                <td class="col-stt">13</td><td class="col-nhom">Sim</td><td class="col-heso">545%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="3.37">
-                <td class="col-stt">14</td><td class="col-nhom">Phụ kiện</td><td class="col-heso">337%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="3.0">
-                <td class="col-stt">15</td><td class="col-nhom">Đồng hồ</td><td class="col-heso">300%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-            <tr data-heso="1.29">
-                <td class="col-stt">16</td><td class="col-nhom">Loa Karaoke</td><td class="col-heso">129%</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct1-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct2-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct3-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="ct4-input" placeholder="-"></td>
-                <td class="col-dtqd">0</td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-                <td class="input-cell"><input type="text" inputmode="numeric" class="other-input" placeholder="-"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+  <div class="container-fluid px-2">
+    <div id="captureArea">
+      <div class="header-panel">
+        <h5 class="text-center mb-3 fw-bold">BÁO CÁO QUY ĐỔI - TRẢ CHẬM</h5>
+        <div class="row g-2">
+          <div class="col-6">
+            <label class="form-label small fw-bold text-white-50 m-0">TÊN NV</label>
+            <input type="text" id="inputTenNV" class="form-control form-control-sm" placeholder="Nhập tên...">
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-bold text-white-50 m-0">NGÀY</label>
+            <input type="date" id="inputNgay" class="form-control form-control-sm">
+          </div>
+        </div>
+      </div>
 
-<script>
-    // Định dạng số thêm dấu phân tách nghìn
-    function formatNumber(num) {
-        return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
+      <div id="dynamicForm"></div>
+    </div>
+  </div>
 
-    // Làm sạch chuỗi hiển thị về số nguyên thuần túy
-    function cleanNumber(val) {
-        let cleanVal = val.replace(/[^\d]/g, '');
-        return cleanVal !== '' ? parseInt(cleanVal, 10) : 0;
-    }
+  <div class="bottom-bar">
+    <div class="summary-box">
+      <div class="summary-item" style="border-right: 1px solid #eee;">
+        <div class="small text-muted fw-bold">TRẢ CHẬM (H1)</div>
+        <div class="summary-value" id="totalH1">0%</div>
+      </div>
+      <div class="summary-item">
+        <div class="small text-muted fw-bold">QUY ĐỔI (i1)</div>
+        <div class="summary-value" id="totalI1">0%</div>
+      </div>
+    </div>
+    <div class="px-1">
+      <button type="button" class="btn btn-primary btn-action" onclick="captureReport()">CAP BÁO CÁO</button>
+    </div>
+  </div>
 
-    // Hàm tính toán và cập nhật toàn bộ bảng
-    function xuLyBang() {
-        const rows = document.querySelectorAll('tbody tr');
+  <script>
+    // 1. Khai báo danh sách cấu hình Nhóm và Hệ số giống hệt như ảnh của bạn
+    const catalogData = [
+      { nhom: "Tivi", heSo: 1.00 },
+      { nhom: "Tủ lạnh", heSo: 1.00 },
+      { nhom: "Máy lạnh", heSo: 1.00 },
+      { nhom: "Máy giặt", heSo: 1.00 },
+      { nhom: "Smartphone", heSo: 1.00 },
+      { nhom: "Tablet/Laptop", heSo: 1.20 },
+      { nhom: "ĐGD/MLN", heSo: 1.85 },
+      { nhom: "DCNB", heSo: 1.92 },
+      { nhom: "VAS", heSo: 3.30 },
+      { nhom: "Bảo hiểm", heSo: 4.18 },
+      { nhom: "Sim", heSo: 5.45 },
+      { nhom: "Phụ kiện", heSo: 3.37 },
+      { nhom: "Đồng hồ", heSo: 3.00 },
+      { nhom: "Loa Karaoke", heSo: 1.29 }
+    ];
+
+    // Khởi tạo form khi tải trang
+    document.addEventListener("DOMContentLoaded", function() {
+      // Tự động chọn ngày hôm nay
+      document.getElementById('inputNgay').value = new Date().toISOString().substring(0, 10);
+      
+      const container = document.getElementById('dynamicForm');
+      container.innerHTML = "";
+
+      catalogData.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'card-item';
+        card.setAttribute('data-index', index);
         
-        let tongCT1 = 0;
-        let tongCT2 = 0;
-        let tongCT3 = 0;
-        let tongCT4 = 0;
-
-        rows.forEach(row => {
-            const heSo = parseFloat(row.getAttribute('data-heso')) || 0;
-
-            const inputSL = row.querySelector('.ct1-input');
-            const inputTMat = row.querySelector('.ct2-input');
-            const inputTGop = row.querySelector('.ct3-input');
-            const inputVi = row.querySelector('.ct4-input');
-            const cellDTQD = row.querySelector('.col-dtqd');
-
-            // Định dạng trực quan khi đang gõ
-            if(document.activeElement === inputSL) inputSL.value = inputSL.value.replace(/[^\d]/g, '') !== '' ? formatNumber(cleanNumber(inputSL.value)) : '';
-            if(document.activeElement === inputTMat) inputTMat.value = inputTMat.value.replace(/[^\d]/g, '') !== '' ? formatNumber(cleanNumber(inputTMat.value)) : '';
-            if(document.activeElement === inputTGop) inputTGop.value = inputTGop.value.replace(/[^\d]/g, '') !== '' ? formatNumber(cleanNumber(inputTGop.value)) : '';
-            if(document.activeElement === inputVi) inputVi.value = inputVi.value.replace(/[^\d]/g, '') !== '' ? formatNumber(cleanNumber(inputVi.value)) : '';
-
-            const valSL = cleanNumber(inputSL.value);
-            const valTMat = cleanNumber(inputTMat.value);
-            const valTGop = cleanNumber(inputTGop.value);
-            const valVi = cleanNumber(inputVi.value);
-
-            tongCT1 += valSL;
-            tongCT2 += valTMat;
-            tongCT3 += valTGop;
-            tongCT4 += valVi;
-
-            // Công thức cột DTQĐ
-            let dtqd = heSo * (valTMat + valTGop + valVi) + (valTGop + valVi) * 0.3;
-            cellDTQD.innerText = dtqd > 0 ? formatNumber(dtqd) : '0';
-        });
-
-        // Hiển thị tổng CT1 -> CT4 lên Header
-        document.getElementById('sum-ct1').innerText = formatNumber(tongCT1);
-        document.getElementById('sum-ct2').innerText = formatNumber(tongCT2);
-        document.getElementById('sum-ct3').innerText = formatNumber(tongCT3);
-        document.getElementById('sum-ct4').innerText = formatNumber(tongCT4);
-
-        // --- TÍNH TOÁN CT6 VÀ CT7 ---
-        const mauSo = tongCT2 + tongCT3 + tongCT4; // (CT2 + CT3 + CT4)
-        const inputCT5 = document.getElementById('input-ct5');
-        
-        // Định dạng ô nhập CT5
-        if(document.activeElement === inputCT5) {
-            inputCT5.value = inputCT5.value.replace(/[^\d]/g, '') !== '' ? formatNumber(cleanNumber(inputCT5.value)) : '';
-        }
-        const valCT5 = cleanNumber(inputCT5.value);
-
-        // Tính CT6
-        let phanTramCT6 = 0;
-        if (mauSo > 0) {
-            phanTramCT6 = ((tongCT3 + tongCT4) / mauSo) * 100;
-        }
-        document.getElementById('sum-ct6').innerText = "CT6: " + phanTramCT6.toFixed(1) + "%";
-
-        // Tính CT7
-        let phanTramCT7 = 0;
-        if (mauSo > 0) {
-            phanTramCT7 = ((valCT5 - mauSo) / mauSo) * 100;
-        }
-        document.getElementById('sum-ct7').innerText = "CT7: " + phanTramCT7.toFixed(1) + "%";
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // Lắng nghe thay đổi dữ liệu bảng và ô nhập CT5 trên Header
-        document.body.addEventListener('input', (e) => {
-            if (e.target.classList.contains('other-input')) {
-                // Xử lý riêng cho các cột phụ tự do không tính tổng
-                let cleanVal = e.target.value.replace(/[^\d]/g, '');
-                if (cleanVal !== '') e.target.value = formatNumber(parseInt(cleanVal, 10));
-            } else {
-                // Xử lý tính toán chính cho toàn bảng
-                xuLyBang();
-            }
-        });
+        card.innerHTML = `
+          <div class="nhom-title">
+            <span>${item.nhom}</span>
+            <span class="he-so-badge">Hệ số: ${Math.round(item.heSo * 100)}%</span>
+          </div>
+          <div class="input-grid">
+            <div>
+              <div class="input-label text-danger">SL</div>
+              <input type="number" class="form-control input-box field-sl" placeholder="0" inputmode="numeric" oninput="calculateRow(${index})">
+            </div>
+            <div>
+              <div class="input-label">T. mặt</div>
+              <input type="number" class="form-control input-box field-tmat" placeholder="0" inputmode="numeric" oninput="calculateRow(${index})">
+            </div>
+            <div>
+              <div class="input-label">T. Góp</div>
+              <input type="number" class="form-control input-box field-tgop" placeholder="0" inputmode="numeric" oninput="calculateRow(${index})">
+            </div>
+            <div>
+              <div class="input-label">Ví</div>
+              <input type="number" class="form-control input-box field-vi" placeholder="0" inputmode="numeric" oninput="calculateRow(${index})">
+            </div>
+          </div>
+          <div class="result-row">
+            DTQĐ (G3): <span class="val-g3">0</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     });
-</script>
 
+    // 2. Hàm tính toán tự động realtime khi nhân viên gõ số
+    function calculateRow(index) {
+      const cards = document.querySelectorAll('.card-item');
+      
+      let totalSumD_F = 0; // Tổng (D3:F16) -> Tổng của tất cả các ô T.mặt, T.góp, Ví của tất cả các hàng
+      let totalSumE_F = 0; // Tổng (E3:F16) -> Tổng của tất cả các ô T.góp, Ví của tất cả các hàng
+      let totalSumG = 0;   // Tổng (G3:G16) -> Tổng DTQĐ của tất cả các hàng
+
+      cards.forEach((card, idx) => {
+        const heSo = catalogData[idx].heSo;
+        
+        const sl = parseFloat(card.querySelector('.field-sl').value) || 0;
+        const tMat = parseFloat(card.querySelector('.field-tmat').value) || 0;
+        const tGop = parseFloat(card.querySelector('.field-tgop').value) || 0;
+        const vi = parseFloat(card.querySelector('.field-vi').value) || 0;
+
+        // --- CÔNG THỨC Ô G3 CHO TỪNG DÒNG ---
+        // G3 = SUM(D3:F3) * B3 + SUM(E3:F3) * 30%
+        // Trong đó: D3=tMat, E3=tGop, F3=vi, B3=heSo
+        const sumD3_F3 = tMat + tGop + vi;
+        const sumE3_F3 = tGop + vi;
+        const g3 = (sumD3_F3 * heSo) + (sumE3_F3 * 0.3);
+        
+        // Hiển thị kết quả G3 ngay tại dòng đó (làm tròn 2 chữ số thập phân)
+        card.querySelector('.val-g3').innerText = Number(g3.toFixed(2));
+
+        // Tích lũy để tính toán cho H1 và i1 toàn bảng
+        totalSumD_F += sumD3_F3;
+        totalSumE_F += sumE3_F3;
+        totalSumG += g3;
+      });
+
+      // --- CÔNG THỨC Ô H1 (TRẢ CHẬM) ---
+      // H1 = SUM($E$3:$F$16) / SUM($D$3:$F$16)
+      let h1 = 0;
+      if (totalSumD_F > 0) {
+        h1 = totalSumE_F / totalSumD_F;
+      }
+      document.getElementById('totalH1').innerText = (h1 * 100).toFixed(1) + "%";
+
+      // --- CÔNG THỨC Ô i1 (QUY ĐỔI) ---
+      // i1 = (SUM($G$3:$G$16) - SUM($D$3:$F$16)) / SUM($D$3:$F$16)
+      let i1 = 0;
+      if (totalSumD_F > 0) {
+        i1 = (totalSumG - totalSumD_F) / totalSumD_F;
+      }
+      document.getElementById('totalI1').innerText = (i1 * 100).toFixed(1) + "%";
+    }
+
+    // 3. Xử lý chức năng nút "Cap" chụp nhanh màn hình báo cáo
+    function captureReport() {
+      const captureArea = document.getElementById('captureArea');
+      
+      // Sử dụng html2canvas để kết xuất vùng nhập liệu thành ảnh PNG
+      html2canvas(captureArea, {
+        useCORS: true,
+        scale: 2, // Nhân đôi độ phân giải để ảnh chụp rõ nét hơn trên điện thoại
+        backgroundColor: "#f4f6f9"
+      }).then(canvas => {
+        const image = canvas.toDataURL("image/png");
+        
+        // Tạo liên kết tải ảnh xuống thiết bị
+        const link = document.createElement('a');
+        const tenNV = document.getElementById('inputTenNV').value || 'NhanVien';
+        const ngay = document.getElementById('inputNgay').value || 'BaoCao';
+        
+        link.download = `BC_${formatName(tenNV)}_${ngay}.png`;
+        link.href = image;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    }
+
+    // Hàm bỏ dấu tiếng Việt để đặt tên file ảnh không lỗi
+    function formatName(str) {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
+    }
+  </script>
 </body>
 </html>
