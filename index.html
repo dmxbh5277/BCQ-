@@ -2,197 +2,152 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Báo Cáo Quy Đổi - Trả Chậm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Báo Cáo Quy Đổi</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* Ẩn hoàn toàn mũi tên tăng giảm của input number trên mọi trình duyệt mobile */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none; margin: 0;
         }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
+        input[type=number] { -moz-appearance: textfield; }
+        th, td { border: 1px solid #e2e8f0; }
     </style>
 </head>
-<body class="bg-gray-50 font-sans antialiased text-sm select-none">
+<body class="bg-gray-100 font-sans antialiased text-sm">
 
-    <div class="max-w-md mx-auto bg-white min-h-screen shadow-md flex flex-col">
+    <div id="report-area" class="max-w-md mx-auto bg-white min-h-screen flex flex-col shadow-xl">
         
-        <div class="bg-[#0070c0] text-white p-4 sticky top-0 z-20 shadow-sm">
-            <div class="text-center font-bold text-base uppercase tracking-wider mb-3">
-                Báo Cáo Quy Đổi - Trả Chậm
-            </div>
+        <div class="bg-[#0070c0] text-white p-4 sticky top-0 z-30">
+            <h1 class="text-center font-bold text-lg uppercase mb-4 tracking-wide">Báo Cáo Quy Đổi - Trả Chậm</h1>
             
-            <div class="grid grid-cols-3 gap-3 pt-2 border-t border-blue-400/30">
-                <div class="flex flex-col justify-center">
-                    <span class="text-blue-200 text-[10px] uppercase font-medium">Ngày áp dụng</span>
-                    <input type="date" id="cell-b1" class="w-full bg-blue-800 text-white rounded px-1 py-1 mt-0.5 border border-blue-600 focus:outline-none text-xs text-center font-semibold">
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-[#0d47a1] rounded-lg p-2 flex flex-col items-center border border-blue-400/30">
+                    <span class="text-[10px] uppercase font-bold text-blue-200">Ngày áp dụng</span>
+                    <input type="date" id="b1" class="bg-transparent text-white font-bold text-xs w-full text-center focus:outline-none mt-1">
                 </div>
-                <div class="flex flex-col items-center bg-blue-900/50 rounded p-1.5 border border-blue-700/50">
-                    <span class="text-blue-200 text-[10px] uppercase font-medium">Quy đổi (H1)</span>
-                    <div id="cell-h1" class="text-xl font-black text-yellow-300 tracking-tight mt-0.5">
-                        0%
-                    </div>
+                <div class="bg-[#0d47a1] rounded-lg p-2 flex flex-col items-center border border-blue-400/30">
+                    <span class="text-[10px] uppercase font-bold text-blue-200 text-center leading-tight">Quy đổi<br>(H1)</span>
+                    <span id="h1" class="text-2xl font-black text-yellow-400 mt-1">0%</span>
                 </div>
-                <div class="flex flex-col items-center bg-blue-900/50 rounded p-1.5 border border-blue-700/50">
-                    <span class="text-blue-200 text-[10px] uppercase font-medium">Trả chậm (I1)</span>
-                    <div id="cell-i1" class="text-xl font-black text-yellow-300 tracking-tight mt-0.5">
-                        0%
-                    </div>
+                <div class="bg-[#0d47a1] rounded-lg p-2 flex flex-col items-center border border-blue-400/30">
+                    <span class="text-[10px] uppercase font-bold text-blue-200 text-center leading-tight">Trả chậm<br>(I1)</span>
+                    <span id="i1" class="text-2xl font-black text-yellow-400 mt-1">0%</span>
                 </div>
             </div>
         </div>
 
-        <div class="flex-1 overflow-x-auto relative">
-            <table class="w-full text-left border-collapse table-fixed min-w-[690px]">
+        <div class="flex-1 overflow-auto relative">
+            <table class="w-full border-collapse table-fixed min-w-[750px]">
                 <thead>
-                    <tr class="bg-[#fce4d6] text-gray-800 font-bold text-center border-b border-gray-300 sticky top-[118px] z-10">
-                        <th class="w-24 px-2 py-2.5 bg-[#fce4d6] sticky left-0 border-r border-gray-200 z-10">Nhóm</th>
-                        <th class="w-14 px-1 py-2.5 border-r border-gray-200">Hệ số</th>
-                        <th class="w-12 px-1 py-2.5 border-r border-gray-200 text-red-600">SL</th>
-                        <th class="w-16 px-1 py-2.5 border-r border-gray-200">T. mặt</th>
-                        <th class="w-16 px-1 py-2.5 border-r border-gray-200">T. Góp</th>
-                        <th class="w-16 px-1 py-2.5 border-r border-gray-200">Ví</th>
-                        <th class="w-16 px-1 py-2.5 border-r border-gray-200 text-blue-700">DTQĐ</th>
-                        <th class="w-16 px-1 py-2.5 border-r border-gray-200">PMH</th>
-                        <th class="w-24 px-2 py-2.5">Khai thác</th>
+                    <tr class="bg-[#fce4d6] text-gray-800 font-bold text-center sticky top-0 z-20 shadow-sm">
+                        <th class="w-24 py-3 sticky left-0 bg-[#fce4d6] z-25 border-r-2 border-gray-300">Nhóm</th>
+                        <th class="w-16">Hệ số</th>
+                        <th class="w-12 text-red-600">SL</th>
+                        <th class="w-20">T. mặt</th>
+                        <th class="w-20">T. Góp</th>
+                        <th class="w-20">Ví</th>
+                        <th class="w-20 text-blue-700">DTQĐ</th>
+                        <th class="w-20">PMH</th>
+                        <th class="w-28">Khai thác</th>
                     </tr>
                 </thead>
-                <tbody id="table-body" class="divide-y divide-gray-200">
-                    </tbody>
+                <tbody id="data-rows" class="bg-white">
+                </tbody>
             </table>
         </div>
 
-        <div class="p-3 bg-gray-50 border-t border-gray-200 sticky bottom-0 flex gap-2 z-20">
-            <button type="button" onclick="resetForm()" class="flex-1 bg-gray-200 text-gray-700 py-2.5 rounded-lg font-medium active:bg-gray-300">
-                Xóa nhập liệu
-            </button>
-            <button type="button" class="flex-1 bg-[#0070c0] text-white py-2.5 rounded-lg font-medium active:bg-blue-700">
-                Lưu dữ liệu
-            </button>
+        <div data-html2canvas-ignore class="p-3 bg-gray-50 border-t flex gap-3 z-30">
+            <button onclick="resetData()" class="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold active:scale-95 transition-transform uppercase text-xs">Xóa nhập liệu</button>
+            <button onclick="captureReport()" class="flex-1 py-3 bg-[#0070c0] text-white rounded-xl font-bold active:scale-95 transition-transform shadow-lg uppercase text-xs">Chụp báo cáo</button>
         </div>
-
     </div>
 
     <script>
-        // Cấu hình danh sách nhóm hàng (Dòng 3 -> 16)
-        const danhSachNhom = [
-            { ten: 'Tivi', heSo: 1.00 },
-            { ten: 'Tủ lạnh', heSo: 1.00 },
-            { ten: 'Máy lạnh', heSo: 1.00 },
-            { ten: 'Máy giặt', heSo: 1.00 },
-            { ten: 'Smartphone', heSo: 1.00 },
-            { ten: 'Tablet/Laptop', heSo: 1.20 },
-            { ten: 'ĐGD/MLN', heSo: 1.85 },
-            { ten: 'DCNB', heSo: 1.92 },
-            { ten: 'VAS', heSo: 3.30 },
-            { ten: 'Bảo hiểm', heSo: 4.18 },
-            { ten: 'Sim', heSo: 5.45 },
-            { ten: 'Phụ kiện', heSo: 3.37 },
-            { ten: 'Đồng hồ', heSo: 3.00 },
-            { ten: 'Loa Karaoke', heSo: 1.29 }
+        const config = [
+            { n: 'Tivi', hs: 1.0 }, { n: 'Tủ lạnh', hs: 1.0 }, { n: 'Máy lạnh', hs: 1.0 },
+            { n: 'Máy giặt', hs: 1.0 }, { n: 'Smartphone', hs: 1.0 }, { n: 'Tablet/Laptop', hs: 1.2 },
+            { n: 'ĐGD/MLN', hs: 1.85 }, { n: 'DCNB', hs: 1.92 }, { n: 'VAS', hs: 3.3 },
+            { n: 'Bảo hiểm', hs: 4.18 }, { n: 'Sim', hs: 5.45 }, { n: 'Phụ kiện', hs: 3.37 },
+            { n: 'Đồng hồ', hs: 3.0 }, { n: 'Loa Karaoke', hs: 1.29 }
         ];
 
-        // 1. TỰ ĐỘNG THIẾT LẬP NGÀY HIỆN TẠI CHO Ô B1
-        const inputB1 = document.getElementById('cell-b1');
-        const homNay = new Date();
-        const nam = homNay.getFullYear();
-        const thang = String(homNay.getMonth() + 1).padStart(2, '0');
-        const ngay = String(homNay.getDate()).padStart(2, '0');
-        inputB1.value = `${nam}-${thang}-${ngay}`;
-
-        // 2. RENDER BẢNG DỮ LIỆU
-        const tbody = document.getElementById('table-body');
-        danhSachNhom.forEach((nhom, index) => {
-            const rowIdx = index + 3;
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-gray-50/50";
-            tr.innerHTML = `
-                <td class="px-2 py-2 bg-white font-medium text-gray-950 border-r border-gray-100 sticky left-0 z-5 shadow-[1px_0_3px_rgba(0,0,0,0.05)]">
-                    ${nhom.ten}
-                </td>
-                <td class="px-1 py-2 text-center text-gray-600 border-r border-gray-100 text-xs font-semibold">
-                    ${Math.round(nhom.heSo * 100)}%
-                </td>
-                <td class="p-0.5 border-r border-gray-100">
-                    <input type="number" inputmode="numeric" class="w-full text-center bg-transparent text-red-600 font-bold py-1.5 focus:outline-none">
-                </td>
-                <td class="p-0.5 border-r border-gray-100">
-                    <input type="number" inputmode="numeric" id="d-${rowIdx}" oninput="tinhToanBaoCao()" class="w-full text-center bg-transparent py-1.5 focus:bg-blue-50/50 focus:outline-none">
-                </td>
-                <td class="p-0.5 border-r border-gray-100">
-                    <input type="number" inputmode="numeric" id="e-${rowIdx}" oninput="tinhToanBaoCao()" class="w-full text-center bg-transparent py-1.5 focus:bg-blue-50/50 focus:outline-none">
-                </td>
-                <td class="p-0.5 border-r border-gray-100">
-                    <input type="number" inputmode="numeric" id="f-${rowIdx}" oninput="tinhToanBaoCao()" class="w-full text-center bg-transparent py-1.5 focus:bg-blue-50/50 focus:outline-none">
-                </td>
-                <td class="p-0.5 border-r border-gray-100 text-center font-bold text-blue-700 bg-gray-50/50" id="g-${rowIdx}">
-                    
-                </td>
-                <td class="p-0.5 border-r border-gray-100">
-                    <input type="text" class="w-full text-center bg-transparent py-1.5 text-xs focus:outline-none">
-                </td>
-                <td class="p-0.5">
-                    <input type="text" class="w-full text-left bg-transparent py-1.5 text-xs px-1 focus:outline-none">
-                </td>
+        document.getElementById('b1').valueAsDate = new Date();
+        const tbody = document.getElementById('data-rows');
+        
+        config.forEach((item, i) => {
+            const row = document.createElement('tr');
+            row.className = "text-center transition-colors hover:bg-blue-50/30";
+            row.innerHTML = `
+                <td class="sticky left-0 bg-white font-bold text-gray-900 px-2 py-3 border-r-2 border-gray-200 z-10 text-left">${item.n}</td>
+                <td class="text-gray-500 font-medium">${Math.round(item.hs * 100)}%</td>
+                <td><input type="number" inputmode="numeric" class="w-full text-center font-bold text-red-600 focus:outline-none bg-transparent"></td>
+                <td><input type="number" inputmode="numeric" id="d-${i}" oninput="calc()" class="w-full text-center focus:bg-blue-50 focus:outline-none bg-transparent py-1"></td>
+                <td><input type="number" inputmode="numeric" id="e-${i}" oninput="calc()" class="w-full text-center focus:bg-blue-50 focus:outline-none bg-transparent py-1"></td>
+                <td><input type="number" inputmode="numeric" id="f-${i}" oninput="calc()" class="w-full text-center focus:bg-blue-50 focus:outline-none bg-transparent py-1"></td>
+                <td id="g-${i}" class="font-bold text-blue-700 bg-gray-50/50"></td>
+                <td><input type="text" class="w-full text-center text-[10px] focus:outline-none bg-transparent"></td>
+                <td><input type="text" class="w-full text-left px-2 text-[10px] focus:outline-none bg-transparent"></td>
             `;
-            tbody.appendChild(tr);
+            tbody.appendChild(row);
         });
 
-        // 3. HÀM TỰ ĐỘNG TÍNH TOÁN THEO CÔNG THỨC EXCEL
-        function tinhToanBaoCao() {
-            let tongD_F = 0;
-            let tongE_F = 0;
-            let tongG = 0;
-
-            danhSachNhom.forEach((nhom, index) => {
-                const rowIdx = index + 3;
+        function calc() {
+            let sumDF = 0, sumEF = 0, sumG = 0;
+            config.forEach((item, i) => {
+                const d = parseFloat(document.getElementById(`d-${i}`).value) || 0;
+                const e = parseFloat(document.getElementById(`e-${i}`).value) || 0;
+                const f = parseFloat(document.getElementById(`f-${i}`).value) || 0;
+                const df = d + e + f;
+                const ef = e + f;
                 
-                const d = parseFloat(document.getElementById(`d-${rowIdx}`).value) || 0;
-                const e = parseFloat(document.getElementById(`e-${rowIdx}`).value) || 0;
-                const f = parseFloat(document.getElementById(`f-${rowIdx}`).value) || 0;
-
-                const sumD_F = d + e + f;
-                const sumE_F = e + f;
-                
-                // Nếu hàng này có nhập dữ liệu mới tính toán cột G
-                if (sumD_F > 0) {
-                    const gValue = (sumD_F * nhom.heSo) + (sumE_F * 0.3);
-                    document.getElementById(`g-${rowIdx}`).innerText = gValue.toFixed(1).replace('.0', '');
-                    tongG += gValue;
+                if (df > 0) {
+                    const g = (df * item.hs) + (ef * 0.3);
+                    document.getElementById(`g-${i}`).innerText = g.toFixed(1).replace('.0', '');
+                    sumG += g;
                 } else {
-                    document.getElementById(`g-${rowIdx}`).innerText = '';
+                    document.getElementById(`g-${i}`).innerText = '';
                 }
-
-                tongD_F += sumD_F;
-                tongE_F += sumE_F;
+                sumDF += df;
+                sumEF += ef;
             });
 
-            // Tính Ô H1 lớn ở Header
-            const h1Element = document.getElementById('cell-h1');
-            if (tongD_F > 0) {
-                h1Element.innerText = ((tongE_F / tongD_F) * 100).toFixed(0) + '%';
-            } else {
-                h1Element.innerText = '0%';
-            }
-
-            // Tính Ô I1 lớn ở Header
-            const i1Element = document.getElementById('cell-i1');
-            if (tongD_F > 0) {
-                i1Element.innerText = (((tongG - tongD_F) / tongD_F) * 100).toFixed(0) + '%';
-            } else {
-                i1Element.innerText = '0%';
-            }
+            const h1Val = sumDF > 0 ? Math.round((sumEF / sumDF) * 100) : 0;
+            const i1Val = sumDF > 0 ? Math.round(((sumG - sumDF) / sumDF) * 100) : 0;
+            document.getElementById('h1').innerText = h1Val + '%';
+            document.getElementById('i1').innerText = i1Val + '%';
         }
 
-        // 4. HÀM XOÁ DỮ LIỆU
-        function resetForm() {
+        function resetData() {
             const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
-            inputs.forEach(input => input.value = '');
-            tinhToanBaoCao();
+            inputs.forEach(el => el.value = '');
+            calc();
+        }
+
+        // ================= HÀM CHỤP MÀN HÌNH VÙNG CHỌN =================
+        function captureReport() {
+            const target = document.getElementById('report-area');
+            
+            // Cấu hình chụp sắc nét và nhận diện đúng css trên thiết bị di động
+            html2canvas(target, {
+                useCORS: true,
+                scale: 2, // Nhân đôi độ phân giải để ảnh lưu về không bị mờ nét chữ
+                scrollX: 0,
+                scrollY: 0
+            }).then(canvas => {
+                // Chuyển kết quả canvas thành file ảnh PNG
+                const image = canvas.toDataURL("image/png");
+                
+                // Tạo link tải ảnh tự động
+                const link = document.createElement('a');
+                
+                // Lấy ngày hiện tại để đặt tên file cho dễ quản lý
+                const dateStr = new Date().toLocaleDateString('vi-VN').replace(/\//g, '-');
+                link.download = `Bao-Cao-Quy-Doi-${dateStr}.png`;
+                
+                link.href = image;
+                link.click();
+            });
         }
     </script>
 </body>
