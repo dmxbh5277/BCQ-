@@ -11,19 +11,8 @@
     <style>
         body { font-family: 'Google Sans', sans-serif; overflow: hidden; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        
-        /* Dùng 100dvh để ép trình duyệt luôn nhận đúng chiều cao màn hình thực tế */
-        .page-container {
-            height: 100dvh; 
-            display: flex;
-            flex-direction: column;
-            background: white;
-        }
-        .scroll-area {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
+        .page-container { height: 100dvh; display: flex; flex-direction: column; background: white; }
+        .scroll-area { flex: 1; overflow-y: auto; }
         tr { height: 30px !important; }
         input { height: 100%; width: 100%; text-align: center; background: transparent; font-size: 12px; }
     </style>
@@ -32,13 +21,18 @@
 
     <div id="report-area" class="page-container max-w-md mx-auto shadow-xl">
         
-        <div class="bg-[#0070c0] text-white p-2.5 flex-none z-30 shadow-sm">
+        <div class="bg-[#0070c0] text-white p-2.5 flex-none z-30">
             <h1 class="text-center font-bold text-sm uppercase mb-2 tracking-wide">Báo Cáo Quy Đổi - Trả Chậm</h1>
             <div class="grid grid-cols-3 gap-2">
-                <div class="bg-[#0d47a1] rounded p-1 flex flex-col items-center"><span class="text-[9px] uppercase font-bold text-blue-200">Ngày áp dụng</span><input type="date" id="b1" class="bg-transparent text-white font-bold text-xs w-full text-center focus:outline-none mt-0.5"></div>
-                <div class="bg-[#0d47a1] rounded p-1 flex flex-col items-center"><span class="text-[9px] uppercase font-bold text-blue-200">Quy đổi (H1)</span><span id="h1" class="text-xl font-black text-yellow-400 mt-0.5">0%</span></div>
-                <div class="bg-[#0d47a1] rounded p-1 flex flex-col items-center"><span class="text-[9px] uppercase font-bold text-blue-200">Trả chậm (I1)</span><span id="i1" class="text-xl font-black text-yellow-400 mt-0.5">0%</span></div>
+                <div class="bg-[#0d47a1] rounded p-1 flex flex-col items-center"><span class="text-[9px] uppercase font-bold text-blue-200">Ngày</span><input type="date" id="b1" class="bg-transparent text-white font-bold text-xs w-full text-center focus:outline-none mt-0.5"></div>
+                <div class="bg-[#0d47a1] rounded p-1 flex flex-col items-center"><span class="text-[9px] uppercase font-bold text-blue-200">Quy đổi</span><span id="h1" class="text-xl font-black text-yellow-400 mt-0.5">0%</span></div>
+                <div class="bg-[#0d47a1] rounded p-1 flex flex-col items-center"><span class="text-[9px] uppercase font-bold text-blue-200">Trả chậm</span><span id="i1" class="text-xl font-black text-yellow-400 mt-0.5">0%</span></div>
             </div>
+        </div>
+
+        <div data-html2canvas-ignore class="p-2 bg-gray-50 border-b flex gap-2 flex-none">
+            <button onclick="resetData()" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded font-bold uppercase text-xs">Xóa</button>
+            <button onclick="captureReport()" class="flex-1 py-2 bg-[#0070c0] text-white rounded font-bold uppercase text-xs">Chụp báo cáo</button>
         </div>
 
         <div class="scroll-area">
@@ -59,15 +53,9 @@
                 <tbody id="data-rows" class="text-[11px]"></tbody>
             </table>
         </div>
-
-        <div data-html2canvas-ignore class="flex-none p-2 bg-gray-50 border-t flex gap-2">
-            <button onclick="resetData()" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded font-bold uppercase text-xs">Xóa</button>
-            <button onclick="captureReport()" class="flex-1 py-2 bg-[#0070c0] text-white rounded font-bold uppercase text-xs">Chụp báo cáo</button>
-        </div>
     </div>
 
     <script>
-        // (Giữ nguyên logic JavaScript cũ của bạn)
         const config = [
             { n: 'Tivi', hs: 1.0 }, { n: 'Tủ lạnh', hs: 1.0 }, { n: 'Máy lạnh', hs: 1.0 },
             { n: 'Máy giặt', hs: 1.0 }, { n: 'Smartphone', hs: 1.0 }, { n: 'Tablet/Laptop', hs: 1.2 },
