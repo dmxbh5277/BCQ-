@@ -4,24 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=3.0">
     <title>Báo Cáo Quy Đổi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
         body { font-family: 'Google Sans', sans-serif; margin: 0; background: #f3f4f6; touch-action: manipulation; }
-        .container { min-width: 400px; min-height: 100vh; display: flex; flex-direction: column; background: white; }
+        .container { min-width: 400px; min-height: 100vh; display: flex; flex-direction: column; background: white; padding: 5px; }
         
         .header { background: #0070c0; color: white; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .header-top { display: flex; gap: 8px; align-items: center; position: relative; }
-        .btn-reset-top { position: absolute; right: 0; background: #ef4444; color: white; border: none; padding: 2px 6px; font-size: 8px; border-radius: 3px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
         
-        /* Bố cục Grid 3x2 mới */
+        .btn-action { border: none; padding: 4px 8px; font-size: 8px; border-radius: 3px; font-weight: bold; text-transform: uppercase; cursor: pointer; color: white; }
+        .btn-capture { background: #10b981; }
+        .btn-reset-top { background: #ef4444; }
+        .btn-group { display: flex; gap: 4px; position: absolute; right: 0; }
+        
         .grid-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .input-box { background: rgba(0,0,0,0.2); border-radius: 4px; padding: 4px; height: 45px; display: flex; flex-direction: column; justify-content: center; }
         .label { font-size: 7px; opacity: 0.8; text-transform: uppercase; text-align: center; }
         .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 20px; width: 100%; outline: none; }
         .stat-val { font-size: 20px; font-weight: bold; color: #fde047; text-align: center; }
 
-        .table-wrap { flex: 1; overflow-x: auto; background: white; }
+        .table-wrap { flex: 1; overflow-x: auto; background: white; margin-top: 10px; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid #e5e7eb; }
         thead { background: #005a9e; color: white; }
         th { font-size: 9px; font-weight: 700; border: 1px solid #0070c0; padding: 4px 2px; text-transform: uppercase; }
@@ -36,17 +40,19 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="capture-area">
     <div class="header">
         <div class="header-top">
             <div style="flex: 1; text-align: center; font-weight: bold; font-size: 13px;">BÁO CÁO QUY ĐỔI</div>
-            <button onclick="resetData()" class="btn-reset-top">Xóa</button>
+            <div class="btn-group">
+                <button onclick="downloadReport()" class="btn-action btn-capture">Tải Ảnh</button>
+                <button onclick="resetData()" class="btn-action btn-reset-top">Xóa</button>
+            </div>
         </div>
         <div class="grid-header">
             <div class="input-box"><div class="label">Tên NV</div><input type="text" id="nv-name" class="input-val" oninput="saveData()"></div>
             <div class="input-box"><div class="label">Tổng Doanh Thu</div><div id="total-rev" class="stat-val">0</div></div>
             <div class="input-box"><div class="label">Quy đổi %</div><div id="h1" class="stat-val">0%</div></div>
-            
             <div class="input-box"><div class="label">Ngày</div><input type="text" id="date-display" class="input-val" oninput="saveData()"></div>
             <div class="input-box"><div class="label">Tổng DT Góp</div><div id="tg-rev" class="stat-val">0</div></div>
             <div class="input-box"><div class="label">Trả Góp %</div><div id="i1" class="stat-val">0%</div></div>
@@ -74,6 +80,7 @@
 </div>
 
 <script>
+    // ... (Giữ nguyên phần config và khởi tạo hàng như cũ)
     const config = [
         { n: 'Tivi', hs: 1.0 }, { n: 'Tủ lạnh', hs: 1.0 }, { n: 'Smartphone', hs: 1.0 },
         { n: 'Tablet/Lap', hs: 1.2 }, { n: 'ĐGD/MLN', hs: 1.85 }, { n: 'DCNB', hs: 1.92 },
@@ -96,9 +103,28 @@
         tbody.appendChild(row);
     });
 
+    // Hàm Tải Ảnh
+    function downloadReport() {
+        const btnGroup = document.querySelector('.btn-group');
+        btnGroup.style.display = 'none'; // Ẩn nút trước khi chụp
+
+        html2canvas(document.getElementById('capture-area'), {
+            scale: 2, // Tăng độ nét của ảnh
+            logging: false,
+            useCORS: true
+        }).then(canvas => {
+            const link = document.createElement('a');
+            const date = document.getElementById('date-display').value || 'baocao';
+            link.download = `BaoCao_${date.replace(/\//g, '-')}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            btnGroup.style.display = 'flex'; // Hiện lại nút sau khi xong
+        });
+    }
+
+    // ... (Giữ nguyên các hàm format, calc, saveData, resetData như cũ)
     function format(e) { e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
     function getV(id) { return parseFloat(document.getElementById(id).value.replace(/\./g, "")) || 0; }
-    
     function calc() {
         let sDF = 0, sEF = 0, sG = 0, sTotal = 0, sTG = 0;
         config.forEach((item, i) => {
@@ -116,13 +142,11 @@
         document.getElementById('total-rev').innerText = sTotal.toLocaleString('vi-VN');
         document.getElementById('tg-rev').innerText = sTG.toLocaleString('vi-VN');
     }
-
     function saveData() {
         const data = {};
         document.querySelectorAll('input').forEach(input => { data[input.id] = input.value; });
         localStorage.setItem('reportData', JSON.stringify(data));
     }
-
     window.onload = function() {
         const saved = localStorage.getItem('reportData');
         if (saved) {
@@ -134,11 +158,12 @@
             document.getElementById('date-display').value = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
         }
     };
-
     function resetData() { 
-        document.querySelectorAll('.data-input').forEach(i => i.value = ''); 
-        localStorage.removeItem('reportData');
-        calc(); 
+        if(confirm("Bạn có chắc muốn xóa tất cả dữ liệu?")) {
+            document.querySelectorAll('.data-input').forEach(i => i.value = ''); 
+            localStorage.removeItem('reportData');
+            calc(); 
+        }
     }
 </script>
 </body>
