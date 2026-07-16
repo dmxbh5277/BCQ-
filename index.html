@@ -2,35 +2,35 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Báo Cáo Quy Đổi</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
         
         * { box-sizing: border-box; }
-        body { font-family: 'Google Sans', sans-serif; margin: 0; background: #f3f4f6; overflow: hidden; }
+        body { font-family: 'Google Sans', sans-serif; margin: 0; background: #f3f4f6; }
         
-        .container { height: 100dvh; display: flex; flex-direction: column; background: white; }
+        .container { min-height: 100vh; display: flex; flex-direction: column; background: white; }
         
         /* HEADER */
         .header { background: #0070c0; color: white; padding: 10px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
         .header-top { display: flex; gap: 8px; align-items: center; }
         .input-box { background: rgba(0,0,0,0.2); border-radius: 4px; padding: 4px; flex: 1; height: 35px; display: flex; flex-direction: column; justify-content: center; }
-        .label { font-size: 7px; opacity: 0.8; text-transform: uppercase; text-align: center; font-family: 'Google Sans', sans-serif; }
-        .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 11px; width: 100%; outline: none; font-family: 'Google Sans', sans-serif; }
+        .label { font-size: 7px; opacity: 0.8; text-transform: uppercase; text-align: center; }
+        .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 11px; width: 100%; outline: none; }
         
         /* TABLE */
         .table-wrap { flex: 1; overflow: auto; background: white; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 600px; }
         tr { height: 24px; }
-        th { font-size: 9px; color: #666; background: #f9fafb; border: 1px solid #e5e7eb; padding: 2px; font-family: 'Google Sans', sans-serif; }
+        th { font-size: 9px; color: #666; background: #f9fafb; border: 1px solid #e5e7eb; padding: 2px; }
         td { border: 1px solid #e5e7eb; padding: 0; text-align: center; }
-        .cell-input { width: 100%; height: 22px; border: none; text-align: center; font-size: 10px; outline: none; font-family: 'Google Sans', sans-serif; }
-        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 11px; font-family: 'Google Sans', sans-serif; }
+        .cell-input { width: 100%; height: 22px; border: none; text-align: center; font-size: 10px; outline: none; }
+        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 11px; }
         
         /* FOOTER */
         .footer { padding: 8px; border-top: 1px solid #eee; }
-        .btn-reset { width: 100%; padding: 8px; background: #ef4444; color: white; border: none; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; font-family: 'Google Sans', sans-serif; }
+        .btn-reset { width: 100%; padding: 8px; background: #ef4444; color: white; border: none; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; }
     </style>
 </head>
 <body>
