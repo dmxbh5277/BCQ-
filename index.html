@@ -19,16 +19,22 @@
         .label { font-size: 7px; opacity: 0.8; text-transform: uppercase; text-align: center; }
         .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 11px; width: 100%; outline: none; }
         
-        /* TABLE - ĐÃ CẬP NHẬT KẺ Ô DỌC NGANG */
+        /* Chỉ số quan trọng: Màu vàng, Font to */
+        .big-stat { font-size: 18px; font-weight: 700; color: #fde047; text-align: center; }
+
+        /* TABLE */
         .table-wrap { flex: 1; overflow-x: auto; background: white; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid #e5e7eb; }
         tr { height: 24px; }
         th { font-size: 9px; color: #666; background: #f9fafb; border: 1px solid #e5e7eb; padding: 2px; }
         td { border: 1px solid #e5e7eb; padding: 0; text-align: center; }
-        .cell-input { width: 100%; height: 22px; border: none; text-align: center; font-size: 10px; outline: none; }
+        
+        .cell-input { width: 100%; height: 22px; border: none; text-align: center; font-size: 12px; font-weight: 500; outline: none; }
         .sticky-col { position: sticky; left: 0; background: white; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 11px; border-right: 1px solid #e5e7eb; }
         
-        /* FOOTER */
+        /* Cột DTQĐ màu đỏ */
+        .dtqd-col { font-weight: bold; color: #dc2626; font-size: 12px; }
+        
         .footer { padding: 10px; background: white; }
         .btn-reset { width: 100%; padding: 10px; background: #ef4444; color: white; border: none; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; }
     </style>
@@ -45,17 +51,17 @@
             <div style="flex: 1; text-align: center; font-weight: bold; font-size: 13px;">BÁO CÁO QUY ĐỔI</div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-            <div class="input-box">
+            <div class="input-box" style="height: 50px;">
                 <div class="label">Ngày</div>
-                <input type="text" value="16/07" class="input-val" style="color:white">
+                <input type="text" value="16/07" class="input-val" style="color:white; font-size: 14px;">
             </div>
-            <div class="input-box">
+            <div class="input-box" style="height: 50px;">
                 <div class="label">Quy đổi</div>
-                <div id="h1" class="input-val" style="color:#fde047">0%</div>
+                <div id="h1" class="big-stat">0%</div>
             </div>
-            <div class="input-box">
+            <div class="input-box" style="height: 50px;">
                 <div class="label">Trả chậm</div>
-                <div id="i1" class="input-val" style="color:#fde047">0%</div>
+                <div id="i1" class="big-stat">0%</div>
             </div>
         </div>
     </div>
@@ -101,7 +107,7 @@
             <td><input type="text" id="d-${i}" class="cell-input data-input" oninput="format(this); calc();"></td>
             <td><input type="text" id="e-${i}" class="cell-input data-input" oninput="format(this); calc();"></td>
             <td><input type="text" id="f-${i}" class="cell-input data-input" oninput="format(this); calc();"></td>
-            <td id="g-${i}" style="font-weight:bold; color:#0070c0; font-size:10px;"></td>
+            <td id="g-${i}" class="dtqd-col"></td>
             <td><input type="text" class="cell-input data-input"></td>
             <td><input type="text" class="cell-input data-input"></td>`;
         tbody.appendChild(row);
