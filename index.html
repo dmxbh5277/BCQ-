@@ -54,7 +54,7 @@
             <div class="input-box"><div class="label">Tổng Doanh Thu</div><div id="total-rev" class="stat-val">0</div></div>
             <div class="input-box"><div class="label">Trả Góp %</div><div id="h1" class="stat-val">0%</div></div>
             
-            <div class="input-box"><div class="label">Ngày</div><input type="text" id="date-display" class="input-val" oninput="saveData()"></div>
+            <div class="input-box"><div class="label">Ngày</div><div id="date-display" class="stat-val">--/--</div></div>
             <div class="input-box"><div class="label">Tổng DT Góp</div><div id="tg-rev" class="stat-val">0</div></div>
             <div class="input-box"><div class="label">Quy đổi %</div><div id="i1" class="stat-val">0%</div></div>
         </div>
@@ -116,8 +116,8 @@
         });
 
         const link = document.createElement('a');
-        const date = document.getElementById('date-display').value || 'baocao';
-        link.download = `BaoCao_${date.replace(/\//g, '-')}.png`;
+        const date = document.getElementById('date-display').innerText.replace(/\//g, '-') || 'baocao';
+        link.download = `BaoCao_${date}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
         
@@ -148,15 +148,21 @@
         document.querySelectorAll('input').forEach(input => { data[input.id] = input.value; });
         localStorage.setItem('reportData', JSON.stringify(data));
     }
+    function setToday() {
+        const now = new Date();
+        document.getElementById('date-display').innerText = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
     window.onload = function() {
+        setToday(); // luôn hiển thị ngày hiện tại, không phụ thuộc dữ liệu đã lưu
         const saved = localStorage.getItem('reportData');
         if (saved) {
             const data = JSON.parse(saved);
-            Object.keys(data).forEach(id => { const el = document.getElementById(id); if (el) el.value = data[id]; });
+            Object.keys(data).forEach(id => {
+                if (id === 'date-display') return; // bỏ qua ngày đã lưu trước đó
+                const el = document.getElementById(id);
+                if (el) el.value = data[id];
+            });
             calc();
-        } else {
-            const now = new Date();
-            document.getElementById('date-display').value = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
         }
     };
     function resetData() { 
