@@ -11,18 +11,21 @@
         body { font-family: 'Google Sans', sans-serif; margin: 0; background: #eef2f6; touch-action: manipulation; }
         .container { min-width: 360px; display: flex; flex-direction: column; background: white; padding: 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         
-        /* HEADER PHỐI MÀU CÂN ĐỐI - KHÔNG ĐÈ CHỮ */
+        /* HEADER PHỐI MÀU CÂN ĐỐI */
         .header { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; padding: 10px; display: flex; flex-direction: column; gap: 10px; border-radius: 6px; }
         .header-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         .header-title { font-weight: bold; font-size: 13px; letter-spacing: 0.5px; white-space: nowrap; flex: 1; }
         
         .btn-group { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
         .btn-action { border: none; padding: 5px 8px; font-size: 8.5px; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; color: white; transition: all 0.2s; white-space: nowrap; }
-        .btn-capture { background: #10b981; }
+        
+        /* ĐỔI MÀU NÚT LƯU SANG VÀNG NỔI BẬT */
+        .btn-save-today { background: #eab308; color: #1e293b; }
+        .btn-save-today:hover { background: #ca8a04; }
+        
+        .btn-capture { background: #10b981; color: white; }
         .btn-capture:hover { background: #059669; }
-        .btn-save-today { background: #3b82f6; }
-        .btn-save-today:hover { background: #2563eb; }
-        .btn-reset-top { background: #ef4444; }
+        .btn-reset-top { background: #ef4444; color: white; }
         .btn-reset-top:hover { background: #dc2626; }
         
         .grid-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
@@ -31,7 +34,7 @@
         .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 18px; width: 100%; outline: none; }
         .stat-val { font-size: 18px; font-weight: bold; color: #fde047; text-align: center; }
 
-        /* ĐỊNH DẠNG BẢNG NHẬP LIỆU CHÍNH - ĐƯỜNG KẺ NHẠT & NỔI KHỐI */
+        /* ĐỊNH DẠNG BẢNG NHẬP LIỆU CHÍNH */
         .table-wrap { flex: 1; overflow-x: auto; background: white; margin-top: 10px; border-radius: 6px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         thead { background: #1e293b; color: white; }
@@ -47,8 +50,6 @@
         .sticky-col { position: sticky; left: 0; background: #ffffff; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 9.5px; color: #334155; border-right: 1px solid #f1f5f9; }
         tr:nth-child(even) .sticky-col { background: #fafafa; }
         .hs-col { font-size: 9px; color: #0284c7; font-weight: bold; }
-        
-        /* CỘT DTQĐ: MÀU CHỮ NỔI BẬT NỀN THƯỜNG */
         .dtqd-col { font-weight: bold; color: #dc2626; font-size: 9px; }
 
         /* THỐNG KÊ 7 NGÀY LIỀN KỀ */
@@ -58,7 +59,7 @@
         .history-table td { font-size: 9px; font-weight: 600; color: #0f172a; height: 24px; border: 1px solid #f1f5f9; }
         .history-table .row-header { font-weight: bold; text-align: left; padding-left: 6px; background: #fafafa; color: #475569; width: 80px; border-right: 1px solid #f1f5f9; }
 
-        /* CHỈ TÔ ĐỎ + IN ĐẬM CHỮ SỐ LIỆU */
+        /* HIGHLIGHT CHỮ ĐỎ KHI THẤP HƠN CHUẨN */
         .text-alert { color: #dc2626 !important; font-weight: 800 !important; }
         
         /* CẢNH BÁO TÊN HEADER */
@@ -84,13 +85,11 @@
             <div class="input-box"><div class="label">Tên NV</div><input type="text" id="nv-name" class="input-val" oninput="saveData()"></div>
             <div class="input-box"><div class="label">Tổng Doanh Thu</div><div id="total-rev" class="stat-val">0</div></div>
             
-            <!-- TRẢ CHẬM KPI BOX -->
             <div class="input-box" id="box-h1"><div class="label">Trả Góp %</div><div id="h1" class="stat-val">0%</div></div>
             
             <div class="input-box"><div class="label">Ngày</div><div id="date-display" class="stat-val">--/--</div></div>
             <div class="input-box"><div class="label">Tổng DT Góp</div><div id="tg-rev" class="stat-val">0</div></div>
             
-            <!-- QUY ĐỔI KPI BOX -->
             <div class="input-box" id="box-i1"><div class="label">Quy đổi %</div><div id="i1" class="stat-val">0%</div></div>
         </div>
     </div>
@@ -377,8 +376,9 @@
         setupAutoSaveAt2350();
     };
 
+    // CHỈ XÓA DỮ LIỆU NHẬP HIỆN TẠI - BẢO TỒN LỊCH SỬ 7 NGÀY
     function resetData() { 
-        if(confirm("Bạn có chắc muốn xóa tất cả dữ liệu báo cáo hôm nay?")) {
+        if(confirm("Bạn có chắc muốn xóa tất cả nhập liệu báo cáo hôm nay?")) {
             document.querySelectorAll('.data-input').forEach(i => i.value = ''); 
             localStorage.removeItem('reportData');
             calc(); 
