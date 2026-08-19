@@ -285,9 +285,9 @@
         const rowBHTanTam = document.getElementById('row-bh-tan-tam');
 
         headerRow.innerHTML = '<th style="width: 80px;">Nhóm</th>';
-        rowTraCham.innerHTML = '<td class="row-header">Trả Chậm</td>';
-        rowQuyDoi.innerHTML = '<td class="row-header">Quy Đổi</td>';
-        rowBHTanTam.innerHTML = '<td class="row-header">BH Tận Tâm</td>';
+        rowTraCham.innerHTML = '<td class="row-header">Trả Chậm (70%)</td>';
+        rowQuyDoi.innerHTML = '<td class="row-header">Quy Đổi (55%)</td>';
+        rowBHTanTam.innerHTML = '<td class="row-header">BH Tận Tâm (80%)</td>';
 
         const dates = [];
         const today = new Date();
@@ -309,7 +309,7 @@
             tdTC.id = `hist-tc-${idx}`;
             const tcVal = dayData.traCham || '';
             tdTC.innerText = tcVal;
-            if (tcVal && parseFloat(tcVal) < 60) tdTC.classList.add('text-alert');
+            if (tcVal && parseFloat(tcVal) < 70) tdTC.classList.add('text-alert');
             rowTraCham.appendChild(tdTC);
 
             const tdQD = document.createElement('td');
@@ -335,7 +335,7 @@
 
         if (elTC) {
             elTC.innerText = currentTraChamVal;
-            if (parseFloat(currentTraChamVal) < 60) elTC.classList.add('text-alert');
+            if (parseFloat(currentTraChamVal) < 70) elTC.classList.add('text-alert');
             else elTC.classList.remove('text-alert');
         }
         if (elQD) {
