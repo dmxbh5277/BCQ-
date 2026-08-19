@@ -9,20 +9,21 @@
         @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
         body { font-family: 'Google Sans', sans-serif; margin: 0; background: #eef2f6; touch-action: manipulation; }
-        .container { min-width: 400px; display: flex; flex-direction: column; background: white; padding: 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .container { min-width: 360px; display: flex; flex-direction: column; background: white; padding: 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         
-        /* HEADER PHỐI MÀU HIỆN ĐẠI */
-        .header { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; padding: 10px; display: flex; flex-direction: column; gap: 8px; border-radius: 6px; }
-        .header-top { display: flex; gap: 8px; align-items: center; position: relative; }
+        /* HEADER PHỐI MÀU CÂN ĐỐI - KHÔNG ĐÈ CHỮ */
+        .header { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; padding: 10px; display: flex; flex-direction: column; gap: 10px; border-radius: 6px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .header-title { font-weight: bold; font-size: 13px; letter-spacing: 0.5px; white-space: nowrap; flex: 1; }
         
-        .btn-action { border: none; padding: 5px 9px; font-size: 9px; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; color: white; transition: all 0.2s; }
+        .btn-group { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+        .btn-action { border: none; padding: 5px 8px; font-size: 8.5px; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; color: white; transition: all 0.2s; white-space: nowrap; }
         .btn-capture { background: #10b981; }
         .btn-capture:hover { background: #059669; }
         .btn-save-today { background: #3b82f6; }
         .btn-save-today:hover { background: #2563eb; }
         .btn-reset-top { background: #ef4444; }
         .btn-reset-top:hover { background: #dc2626; }
-        .btn-group { display: flex; gap: 4px; position: absolute; right: 0; }
         
         .grid-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .input-box { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 4px; height: 46px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
@@ -30,34 +31,34 @@
         .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 18px; width: 100%; outline: none; }
         .stat-val { font-size: 18px; font-weight: bold; color: #fde047; text-align: center; }
 
-        /* ĐỊNH DẠNG BẢNG NHẬP LIỆU CHÍNH */
-        .table-wrap { flex: 1; overflow-x: auto; background: white; margin-top: 10px; border-radius: 6px; border: 1px solid #cbd5e1; }
+        /* ĐỊNH DẠNG BẢNG NHẬP LIỆU CHÍNH - ĐƯỜNG KẺ NHẠT & NỔI KHỐI */
+        .table-wrap { flex: 1; overflow-x: auto; background: white; margin-top: 10px; border-radius: 6px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         thead { background: #1e293b; color: white; }
         th { font-size: 9px; font-weight: 700; border: 1px solid #334155; padding: 6px 2px; text-transform: uppercase; letter-spacing: 0.2px; }
         tr { height: 25px; }
-        tr:nth-child(even) { background-color: #f8fafc; }
+        tr:nth-child(even) { background-color: #fafafa; }
         tr:hover { background-color: #f1f5f9; }
-        td { border: 1px solid #e2e8f0; padding: 0; text-align: center; }
+        td { border: 1px solid #f1f5f9; padding: 0; text-align: center; }
         
         .cell-input { width: 100%; height: 23px; border: none; text-align: center; font-size: 9px; font-weight: 500; outline: none; background: transparent; }
         .cell-input:focus { background-color: #e0f2fe; }
         
-        .sticky-col { position: sticky; left: 0; background: #ffffff; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 9.5px; color: #334155; border-right: 1px solid #cbd5e1; }
-        tr:nth-child(even) .sticky-col { background: #f8fafc; }
+        .sticky-col { position: sticky; left: 0; background: #ffffff; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 9.5px; color: #334155; border-right: 1px solid #f1f5f9; }
+        tr:nth-child(even) .sticky-col { background: #fafafa; }
         .hs-col { font-size: 9px; color: #0284c7; font-weight: bold; }
         
-        /* CỘT DTQĐ: ĐÃ BỎ MÀU VÀNG, ĐỒNG BỘ MÀU CHỮ NỔI BẬT NỀN THƯỜNG */
+        /* CỘT DTQĐ: MÀU CHỮ NỔI BẬT NỀN THƯỜNG */
         .dtqd-col { font-weight: bold; color: #dc2626; font-size: 9px; }
 
         /* THỐNG KÊ 7 NGÀY LIỀN KỀ */
         .history-section { margin-top: 12px; border-top: 2px solid #0284c7; padding-top: 8px; }
         .history-title { font-size: 10px; font-weight: bold; color: #0369a1; margin-bottom: 6px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
-        .history-table th { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 9px; }
-        .history-table td { font-size: 9px; font-weight: 600; color: #0f172a; height: 24px; }
-        .history-table .row-header { font-weight: bold; text-align: left; padding-left: 6px; background: #f8fafc; color: #475569; width: 80px; }
+        .history-table th { background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; font-size: 9px; }
+        .history-table td { font-size: 9px; font-weight: 600; color: #0f172a; height: 24px; border: 1px solid #f1f5f9; }
+        .history-table .row-header { font-weight: bold; text-align: left; padding-left: 6px; background: #fafafa; color: #475569; width: 80px; border-right: 1px solid #f1f5f9; }
 
-        /* CHỈ TÔ ĐỎ + IN ĐẬM CHỮ CHỮ SỐ LIỆU (KHÔNG TÔ NỀN NGUYÊN Ô) */
+        /* CHỈ TÔ ĐỎ + IN ĐẬM CHỮ SỐ LIỆU */
         .text-alert { color: #dc2626 !important; font-weight: 800 !important; }
         
         /* CẢNH BÁO TÊN HEADER */
@@ -72,9 +73,9 @@
     <!-- HEADER -->
     <div class="header" id="header-part">
         <div class="header-top">
-            <div style="flex: 1; text-align: center; font-weight: bold; font-size: 13px; letter-spacing: 0.5px;">BÁO CÁO QUY ĐỔI</div>
+            <div class="header-title">BÁO CÁO QUY ĐỔI</div>
             <div class="btn-group" id="btn-group">
-                <button onclick="saveTodayDataManually()" class="btn-action btn-save-today">Lưu Hôm Nay</button>
+                <button onclick="saveTodayDataManually()" class="btn-action btn-save-today">Lưu</button>
                 <button onclick="downloadReport()" class="btn-action btn-capture">Tải Ảnh</button>
                 <button onclick="resetData()" class="btn-action btn-reset-top">Xóa</button>
             </div>
@@ -221,19 +222,15 @@
         document.getElementById('total-rev').innerText = sTotal.toLocaleString('vi-VN');
         document.getElementById('tg-rev').innerText = sTG.toLocaleString('vi-VN');
 
-        // LOGIC HIGHLIGHT CẢNH BÁO MÀU ĐỎ CÁC KHỐI KPI TRÊN HEADER
         const boxH1 = document.getElementById('box-h1');
         const boxI1 = document.getElementById('box-i1');
 
-        // Trả Chậm < 60% => Đỏ
         if (sDF > 0 && rawTraCham < 60) boxH1.classList.add('box-alert');
         else boxH1.classList.remove('box-alert');
 
-        // Quy Đổi < 55% => Đỏ
         if (sDF > 0 && rawQuyDoi < 55) boxI1.classList.add('box-alert');
         else boxI1.classList.remove('box-alert');
 
-        // TÍNH BH TẬN TÂM
         const slBHTanTam = getV(`sl-${bhTanTamIndex}`);
         let sumSLMain = 0;
         mainGroupIndices.forEach(idx => { sumSLMain += getV(`sl-${idx}`); });
@@ -309,7 +306,6 @@
             th.innerText = dObj.dayNum;
             headerRow.appendChild(th);
 
-            // Dòng Trả chậm (Highlight chữ đỏ nếu < 60%)
             const tdTC = document.createElement('td');
             tdTC.id = `hist-tc-${idx}`;
             const tcVal = dayData.traCham || '';
@@ -317,7 +313,6 @@
             if (tcVal && parseFloat(tcVal) < 60) tdTC.classList.add('text-alert');
             rowTraCham.appendChild(tdTC);
 
-            // Dòng Quy đổi (Highlight chữ đỏ nếu < 55%)
             const tdQD = document.createElement('td');
             tdQD.id = `hist-qd-${idx}`;
             const qdVal = dayData.quyDoi || '';
@@ -325,7 +320,6 @@
             if (qdVal && parseFloat(qdVal) < 55) tdQD.classList.add('text-alert');
             rowQuyDoi.appendChild(tdQD);
 
-            // Dòng BH Tận Tâm (Highlight chữ đỏ nếu < 80%)
             const tdBH = document.createElement('td');
             tdBH.id = `hist-bh-${idx}`;
             const bhVal = dayData.bhTanTam || '';
