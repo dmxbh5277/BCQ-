@@ -8,43 +8,73 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
-        body { font-family: 'Google Sans', sans-serif; margin: 0; background: #f3f4f6; touch-action: manipulation; }
-        .container { min-width: 400px; display: flex; flex-direction: column; background: white; padding: 5px; }
+        body { font-family: 'Google Sans', sans-serif; margin: 0; background: #eef2f6; touch-action: manipulation; }
+        .container { min-width: 400px; display: flex; flex-direction: column; background: white; padding: 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         
-        .header { background: #0070c0; color: white; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        /* HEADER PHỐI MÀU HIỆN ĐẠI */
+        .header { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; padding: 10px; display: flex; flex-direction: column; gap: 8px; border-radius: 6px; }
         .header-top { display: flex; gap: 8px; align-items: center; position: relative; }
         
-        .btn-action { border: none; padding: 4px 8px; font-size: 8px; border-radius: 3px; font-weight: bold; text-transform: uppercase; cursor: pointer; color: white; }
+        .btn-action { border: none; padding: 5px 9px; font-size: 9px; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; color: white; transition: all 0.2s; }
         .btn-capture { background: #10b981; }
+        .btn-capture:hover { background: #059669; }
+        .btn-save-today { background: #3b82f6; }
+        .btn-save-today:hover { background: #2563eb; }
         .btn-reset-top { background: #ef4444; }
+        .btn-reset-top:hover { background: #dc2626; }
         .btn-group { display: flex; gap: 4px; position: absolute; right: 0; }
         
-        .grid-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .input-box { background: rgba(0,0,0,0.2); border-radius: 4px; padding: 4px; height: 45px; display: flex; flex-direction: column; justify-content: center; }
-        .label { font-size: 7px; opacity: 0.8; text-transform: uppercase; text-align: center; }
-        .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 20px; width: 100%; outline: none; }
-        .stat-val { font-size: 20px; font-weight: bold; color: #fde047; text-align: center; }
+        .grid-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .input-box { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 4px; height: 46px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
+        .label { font-size: 7.5px; opacity: 0.9; text-transform: uppercase; text-align: center; letter-spacing: 0.3px; }
+        .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 18px; width: 100%; outline: none; }
+        .stat-val { font-size: 18px; font-weight: bold; color: #fde047; text-align: center; }
 
-        .table-wrap { flex: 1; overflow-x: auto; background: white; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid #e5e7eb; }
-        thead { background: #005a9e; color: white; }
-        th { font-size: 9px; font-weight: 700; border: 1px solid #0070c0; padding: 4px 2px; text-transform: uppercase; }
-        tr { height: 24px; }
-        td { border: 1px solid #e5e7eb; padding: 0; text-align: center; }
+        /* ĐỊNH DẠNG BẢNG NHẬP LIỆU CHÍNH */
+        .table-wrap { flex: 1; overflow-x: auto; background: white; margin-top: 10px; border-radius: 6px; border: 1px solid #cbd5e1; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        thead { background: #1e293b; color: white; }
+        th { font-size: 9px; font-weight: 700; border: 1px solid #334155; padding: 6px 2px; text-transform: uppercase; letter-spacing: 0.2px; }
+        tr { height: 25px; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        tr:hover { background-color: #f1f5f9; }
+        td { border: 1px solid #e2e8f0; padding: 0; text-align: center; }
         
-        .cell-input { width: 100%; height: 22px; border: none; text-align: center; font-size: 8.5px; font-weight: 500; outline: none; }
-        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 10px; border-right: 1px solid #e5e7eb; }
-        .hs-col { font-size: 8.5px; color: #dc2626; font-weight: bold; }
+        .cell-input { width: 100%; height: 23px; border: none; text-align: center; font-size: 9px; font-weight: 500; outline: none; background: transparent; }
+        .cell-input:focus { background-color: #e0f2fe; }
+        
+        .sticky-col { position: sticky; left: 0; background: #ffffff; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 9.5px; color: #334155; border-right: 1px solid #cbd5e1; }
+        tr:nth-child(even) .sticky-col { background: #f8fafc; }
+        .hs-col { font-size: 9px; color: #0284c7; font-weight: bold; }
+        
+        /* CỘT DTQĐ: ĐÃ BỎ MÀU VÀNG, ĐỒNG BỘ MÀU CHỮ NỔI BẬT NỀN THƯỜNG */
         .dtqd-col { font-weight: bold; color: #dc2626; font-size: 9px; }
+
+        /* THỐNG KÊ 7 NGÀY LIỀN KỀ */
+        .history-section { margin-top: 12px; border-top: 2px solid #0284c7; padding-top: 8px; }
+        .history-title { font-size: 10px; font-weight: bold; color: #0369a1; margin-bottom: 6px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
+        .history-table th { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 9px; }
+        .history-table td { font-size: 9px; font-weight: 600; color: #0f172a; height: 24px; }
+        .history-table .row-header { font-weight: bold; text-align: left; padding-left: 6px; background: #f8fafc; color: #475569; width: 80px; }
+
+        /* CHỈ TÔ ĐỎ + IN ĐẬM CHỮ CHỮ SỐ LIỆU (KHÔNG TÔ NỀN NGUYÊN Ô) */
+        .text-alert { color: #dc2626 !important; font-weight: 800 !important; }
+        
+        /* CẢNH BÁO TÊN HEADER */
+        .box-alert { background-color: rgba(220, 38, 38, 0.85) !important; border: 1px solid #f87171 !important; }
+        .box-alert .stat-val { color: #ffffff !important; }
+        .box-alert .label { color: #fee2e2 !important; opacity: 1; }
     </style>
 </head>
 <body>
 
 <div class="container" id="capture-area">
+    <!-- HEADER -->
     <div class="header" id="header-part">
         <div class="header-top">
-            <div style="flex: 1; text-align: center; font-weight: bold; font-size: 13px;">BÁO CÁO QUY ĐỔI</div>
+            <div style="flex: 1; text-align: center; font-weight: bold; font-size: 13px; letter-spacing: 0.5px;">BÁO CÁO QUY ĐỔI</div>
             <div class="btn-group" id="btn-group">
+                <button onclick="saveTodayDataManually()" class="btn-action btn-save-today">Lưu Hôm Nay</button>
                 <button onclick="downloadReport()" class="btn-action btn-capture">Tải Ảnh</button>
                 <button onclick="resetData()" class="btn-action btn-reset-top">Xóa</button>
             </div>
@@ -52,14 +82,19 @@
         <div class="grid-header">
             <div class="input-box"><div class="label">Tên NV</div><input type="text" id="nv-name" class="input-val" oninput="saveData()"></div>
             <div class="input-box"><div class="label">Tổng Doanh Thu</div><div id="total-rev" class="stat-val">0</div></div>
-            <div class="input-box"><div class="label">Trả Góp %</div><div id="h1" class="stat-val">0%</div></div>
+            
+            <!-- TRẢ CHẬM KPI BOX -->
+            <div class="input-box" id="box-h1"><div class="label">Trả Góp %</div><div id="h1" class="stat-val">0%</div></div>
             
             <div class="input-box"><div class="label">Ngày</div><div id="date-display" class="stat-val">--/--</div></div>
             <div class="input-box"><div class="label">Tổng DT Góp</div><div id="tg-rev" class="stat-val">0</div></div>
-            <div class="input-box"><div class="label">Quy đổi %</div><div id="i1" class="stat-val">0%</div></div>
+            
+            <!-- QUY ĐỔI KPI BOX -->
+            <div class="input-box" id="box-i1"><div class="label">Quy đổi %</div><div id="i1" class="stat-val">0%</div></div>
         </div>
     </div>
 
+    <!-- BẢNG NHẬP LIỆU CHÍNH -->
     <div class="table-wrap" id="table-part">
         <table>
             <thead>
@@ -78,6 +113,31 @@
             <tbody id="data-rows"></tbody>
         </table>
     </div>
+
+    <!-- BẢNG THỐNG KÊ 7 NGÀY -->
+    <div class="history-section">
+        <div class="history-title">Thống Kê 7 Ngày Liền Kề</div>
+        <div class="table-wrap" style="margin-top: 0;">
+            <table class="history-table">
+                <thead>
+                    <tr id="hist-header">
+                        <th style="width: 80px;">Nhóm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="row-tra-cham">
+                        <td class="row-header">Trả Chậm</td>
+                    </tr>
+                    <tr id="row-quy-doi">
+                        <td class="row-header">Quy Đổi</td>
+                    </tr>
+                    <tr id="row-bh-tan-tam">
+                        <td class="row-header">BH Tận Tâm</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -87,6 +147,13 @@
         { n: 'Phụ kiện', hs: 3.37 }, { n: 'VAS', hs: 3.3 }, { n: 'ĐGD/MLN', hs: 1.85 }, { n: 'DCNB', hs: 1.92 },
         { n: 'Đồng hồ', hs: 3.0 }, { n: 'Loa Kara', hs: 1.29 }
     ];
+
+    const mainGroupIndices = [0, 1, 2, 3, 4, 5];
+    const bhTanTamIndex = 6; 
+
+    let currentTraChamVal = "0%";
+    let currentQuyDoiVal = "0%";
+    let currentBHTanTamVal = "0%";
 
     const tbody = document.getElementById('data-rows');
     config.forEach((item, i) => {
@@ -125,7 +192,11 @@
     }
 
     function format(e) { e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-    function getV(id) { return parseFloat(document.getElementById(id).value.replace(/\./g, "")) || 0; }
+    function getV(id) { 
+        const el = document.getElementById(id);
+        return el ? (parseFloat(el.value.replace(/\./g, "")) || 0) : 0; 
+    }
+
     function calc() {
         let sDF = 0, sEF = 0, sG = 0, sTotal = 0, sTG = 0;
         config.forEach((item, i) => {
@@ -138,35 +209,182 @@
                 sG += g; sDF += df; sEF += ef;
             } else document.getElementById(`g-${i}`).innerText = '';
         });
-        document.getElementById('h1').innerText = sDF ? Math.round(sEF/sDF*100) + '%' : '0%';
-        document.getElementById('i1').innerText = sDF ? Math.round((sG-sDF)/sDF*100) + '%' : '0%';
+
+        const rawTraCham = sDF ? (sEF/sDF*100) : 0;
+        const rawQuyDoi = sDF ? ((sG-sDF)/sDF*100) : 0;
+
+        currentTraChamVal = Math.round(rawTraCham) + '%';
+        currentQuyDoiVal = Math.round(rawQuyDoi) + '%';
+
+        document.getElementById('h1').innerText = currentTraChamVal;
+        document.getElementById('i1').innerText = currentQuyDoiVal;
         document.getElementById('total-rev').innerText = sTotal.toLocaleString('vi-VN');
         document.getElementById('tg-rev').innerText = sTG.toLocaleString('vi-VN');
+
+        // LOGIC HIGHLIGHT CẢNH BÁO MÀU ĐỎ CÁC KHỐI KPI TRÊN HEADER
+        const boxH1 = document.getElementById('box-h1');
+        const boxI1 = document.getElementById('box-i1');
+
+        // Trả Chậm < 60% => Đỏ
+        if (sDF > 0 && rawTraCham < 60) boxH1.classList.add('box-alert');
+        else boxH1.classList.remove('box-alert');
+
+        // Quy Đổi < 55% => Đỏ
+        if (sDF > 0 && rawQuyDoi < 55) boxI1.classList.add('box-alert');
+        else boxI1.classList.remove('box-alert');
+
+        // TÍNH BH TẬN TÂM
+        const slBHTanTam = getV(`sl-${bhTanTamIndex}`);
+        let sumSLMain = 0;
+        mainGroupIndices.forEach(idx => { sumSLMain += getV(`sl-${idx}`); });
+
+        const rawBHTanTam = sumSLMain > 0 ? ((slBHTanTam / sumSLMain) * 100) : 0;
+        currentBHTanTamVal = Math.round(rawBHTanTam) + '%';
+
+        updateTodayInHistoryTable();
     }
+
     function saveData() {
         const data = {};
         document.querySelectorAll('input').forEach(input => { data[input.id] = input.value; });
         localStorage.setItem('reportData', JSON.stringify(data));
+        autoSaveTodayStats();
     }
+
     function setToday() {
         const now = new Date();
         document.getElementById('date-display').innerText = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
     }
+
+    function getTodayKey() {
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    }
+
+    function autoSaveTodayStats() {
+        const history = JSON.parse(localStorage.getItem('reportHistory7Days') || '{}');
+        const todayKey = getTodayKey();
+        
+        history[todayKey] = {
+            dayNum: new Date().getDate(),
+            traCham: currentTraChamVal,
+            quyDoi: currentQuyDoiVal,
+            bhTanTam: currentBHTanTamVal
+        };
+
+        localStorage.setItem('reportHistory7Days', JSON.stringify(history));
+    }
+
+    function saveTodayDataManually() {
+        autoSaveTodayStats();
+        renderHistoryTable();
+        alert("Đã chốt và lưu dữ liệu hôm nay thành công!");
+    }
+
+    function renderHistoryTable() {
+        const history = JSON.parse(localStorage.getItem('reportHistory7Days') || '{}');
+        const headerRow = document.getElementById('hist-header');
+        const rowTraCham = document.getElementById('row-tra-cham');
+        const rowQuyDoi = document.getElementById('row-quy-doi');
+        const rowBHTanTam = document.getElementById('row-bh-tan-tam');
+
+        headerRow.innerHTML = '<th style="width: 80px;">Nhóm</th>';
+        rowTraCham.innerHTML = '<td class="row-header">Trả Chậm</td>';
+        rowQuyDoi.innerHTML = '<td class="row-header">Quy Đổi</td>';
+        rowBHTanTam.innerHTML = '<td class="row-header">BH Tận Tâm</td>';
+
+        const dates = [];
+        const today = new Date();
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(today);
+            d.setDate(today.getDate() - i);
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            dates.push({ key: key, dayNum: d.getDate() });
+        }
+
+        dates.forEach((dObj, idx) => {
+            const dayData = history[dObj.key] || {};
+
+            const th = document.createElement('th');
+            th.innerText = dObj.dayNum;
+            headerRow.appendChild(th);
+
+            // Dòng Trả chậm (Highlight chữ đỏ nếu < 60%)
+            const tdTC = document.createElement('td');
+            tdTC.id = `hist-tc-${idx}`;
+            const tcVal = dayData.traCham || '';
+            tdTC.innerText = tcVal;
+            if (tcVal && parseFloat(tcVal) < 60) tdTC.classList.add('text-alert');
+            rowTraCham.appendChild(tdTC);
+
+            // Dòng Quy đổi (Highlight chữ đỏ nếu < 55%)
+            const tdQD = document.createElement('td');
+            tdQD.id = `hist-qd-${idx}`;
+            const qdVal = dayData.quyDoi || '';
+            tdQD.innerText = qdVal;
+            if (qdVal && parseFloat(qdVal) < 55) tdQD.classList.add('text-alert');
+            rowQuyDoi.appendChild(tdQD);
+
+            // Dòng BH Tận Tâm (Highlight chữ đỏ nếu < 80%)
+            const tdBH = document.createElement('td');
+            tdBH.id = `hist-bh-${idx}`;
+            const bhVal = dayData.bhTanTam || '';
+            tdBH.innerText = bhVal;
+            if (bhVal && parseFloat(bhVal) < 80) tdBH.classList.add('text-alert');
+            rowBHTanTam.appendChild(tdBH);
+        });
+    }
+
+    function updateTodayInHistoryTable() {
+        const elTC = document.getElementById('hist-tc-0');
+        const elQD = document.getElementById('hist-qd-0');
+        const elBH = document.getElementById('hist-bh-0');
+
+        if (elTC) {
+            elTC.innerText = currentTraChamVal;
+            if (parseFloat(currentTraChamVal) < 60) elTC.classList.add('text-alert');
+            else elTC.classList.remove('text-alert');
+        }
+        if (elQD) {
+            elQD.innerText = currentQuyDoiVal;
+            if (parseFloat(currentQuyDoiVal) < 55) elQD.classList.add('text-alert');
+            else elQD.classList.remove('text-alert');
+        }
+        if (elBH) {
+            elBH.innerText = currentBHTanTamVal;
+            if (parseFloat(currentBHTanTamVal) < 80) elBH.classList.add('text-alert');
+            else elBH.classList.remove('text-alert');
+        }
+    }
+
+    function setupAutoSaveAt2350() {
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 23 && now.getMinutes() === 50 && now.getSeconds() === 0) {
+                autoSaveTodayStats();
+                renderHistoryTable();
+            }
+        }, 1000);
+    }
+
     window.onload = function() {
-        setToday(); // luôn hiển thị ngày hiện tại, không phụ thuộc dữ liệu đã lưu
+        setToday(); 
         const saved = localStorage.getItem('reportData');
         if (saved) {
             const data = JSON.parse(saved);
             Object.keys(data).forEach(id => {
-                if (id === 'date-display') return; // bỏ qua ngày đã lưu trước đó
+                if (id === 'date-display') return; 
                 const el = document.getElementById(id);
                 if (el) el.value = data[id];
             });
-            calc();
         }
+        renderHistoryTable();
+        calc();
+        setupAutoSaveAt2350();
     };
+
     function resetData() { 
-        if(confirm("Bạn có chắc muốn xóa tất cả dữ liệu?")) {
+        if(confirm("Bạn có chắc muốn xóa tất cả dữ liệu báo cáo hôm nay?")) {
             document.querySelectorAll('.data-input').forEach(i => i.value = ''); 
             localStorage.removeItem('reportData');
             calc(); 
