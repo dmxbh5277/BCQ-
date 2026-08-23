@@ -17,9 +17,8 @@
         .header-title { font-weight: bold; font-size: 13px; letter-spacing: 0.5px; white-space: nowrap; flex: 1; }
         
         .btn-group { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
-        .btn-action { border: none; padding: 5px 8px; font-size: 8.5px; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; color: white; transition: all 0.2s; white-space: nowrap; }
+        .btn-action { border: none; padding: 5px 8px; font-size: 8.5px; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
         
-        /* ĐỔI MÀU NÚT LƯU SANG VÀNG NỔI BẬT */
         .btn-save-today { background: #eab308; color: #1e293b; }
         .btn-save-today:hover { background: #ca8a04; }
         
@@ -49,8 +48,9 @@
         
         .sticky-col { position: sticky; left: 0; background: #ffffff; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 9.5px; color: #334155; border-right: 1px solid #f1f5f9; }
         tr:nth-child(even) .sticky-col { background: #fafafa; }
-        .hs-col { font-size: 9px; color: #0284c7; font-weight: bold; }
+        
         .dtqd-col { font-weight: bold; color: #dc2626; font-size: 9px; }
+        .gtdh-col { font-weight: bold; color: #0284c7; font-size: 9px; }
 
         /* THỐNG KÊ 7 NGÀY LIỀN KỀ */
         .history-section { margin-top: 12px; border-top: 2px solid #0284c7; padding-top: 8px; }
@@ -59,10 +59,7 @@
         .history-table td { font-size: 9px; font-weight: 600; color: #0f172a; height: 24px; border: 1px solid #f1f5f9; }
         .history-table .row-header { font-weight: bold; text-align: left; padding-left: 6px; background: #fafafa; color: #475569; width: 80px; border-right: 1px solid #f1f5f9; }
 
-        /* HIGHLIGHT CHỮ ĐỎ KHI THẤP HƠN CHUẨN */
         .text-alert { color: #dc2626 !important; font-weight: 800 !important; }
-        
-        /* CẢNH BÁO TÊN HEADER */
         .box-alert { background-color: rgba(220, 38, 38, 0.85) !important; border: 1px solid #f87171 !important; }
         .box-alert .stat-val { color: #ffffff !important; }
         .box-alert .label { color: #fee2e2 !important; opacity: 1; }
@@ -99,14 +96,12 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 70px;">Nhóm</th>
-                    <th style="width: 40px;">Hệ số</th>
-                    <th style="width: 25px;">SL</th>
-                    <th style="width: 35px;">T.Mặt</th>
-                    <th style="width: 35px;">T.Góp</th>
-                    <th style="width: 35px;">Ví</th>
-                    <th style="width: 45px;">DTQĐ</th>
-                    <th style="width: 55px;">PMH</th>
+                    <th style="width: 80px;">Nhóm</th>
+                    <th style="width: 30px;">SL</th>
+                    <th style="width: 45px;">T.Mặt</th>
+                    <th style="width: 45px;">Góp/Ví</th>
+                    <th style="width: 50px;">GTĐH</th>
+                    <th style="width: 50px;">DTQĐ</th>
                     <th style="width: 65px;">K.thác</th>
                 </tr>
             </thead>
@@ -159,13 +154,11 @@
     config.forEach((item, i) => {
         const row = document.createElement('tr');
         row.innerHTML = `<td class="sticky-col">${item.n}</td>
-            <td class="hs-col">${Math.round(item.hs * 100)}%</td>
             <td><input type="text" class="cell-input data-input" id="sl-${i}" oninput="format(this); calc(); saveData();"></td>
             <td><input type="text" id="d-${i}" class="cell-input data-input" oninput="format(this); calc(); saveData();"></td>
             <td><input type="text" id="e-${i}" class="cell-input data-input" oninput="format(this); calc(); saveData();"></td>
-            <td><input type="text" id="f-${i}" class="cell-input data-input" oninput="format(this); calc(); saveData();"></td>
+            <td id="gtdh-${i}" class="gtdh-col"></td>
             <td id="g-${i}" class="dtqd-col"></td>
-            <td><input type="text" class="cell-input data-input" id="pmh-${i}" oninput="saveData()"></td>
             <td><input type="text" class="cell-input data-input" id="kt-${i}" oninput="saveData()"></td>`;
         tbody.appendChild(row);
     });
@@ -200,14 +193,28 @@
     function calc() {
         let sDF = 0, sEF = 0, sG = 0, sTotal = 0, sTG = 0;
         config.forEach((item, i) => {
-            const d = getV(`d-${i}`), e = getV(`e-${i}`), f = getV(`f-${i}`);
-            const df = d + e + f, ef = e + f;
+            const sl = getV(`sl-${i}`);
+            const tMat = getV(`d-${i}`);
+            const gopVi = getV(`e-${i}`);
+            
+            if (sl > 0 && (tMat + gopVi) > 0) {
+                const gtdh = (tMat + gopVi) / sl;
+                document.getElementById(`gtdh-${i}`).innerText = Math.round(gtdh).toLocaleString('vi-VN');
+            } else {
+                document.getElementById(`gtdh-${i}`).innerText = '';
+            }
+
+            const df = tMat + gopVi;
+            const ef = gopVi;
             sTotal += df; sTG += ef;
+
             if(df > 0) {
                 const g = (df * item.hs) + (ef * 0.3);
                 document.getElementById(`g-${i}`).innerText = Math.round(g).toLocaleString('vi-VN');
                 sG += g; sDF += df; sEF += ef;
-            } else document.getElementById(`g-${i}`).innerText = '';
+            } else {
+                document.getElementById(`g-${i}`).innerText = '';
+            }
         });
 
         const rawTraCham = sDF ? (sEF/sDF*100) : 0;
@@ -285,9 +292,9 @@
         const rowBHTanTam = document.getElementById('row-bh-tan-tam');
 
         headerRow.innerHTML = '<th style="width: 80px;">Nhóm</th>';
-        rowTraCham.innerHTML = '<td class="row-header">Trả Chậm (70%)</td>';
-        rowQuyDoi.innerHTML = '<td class="row-header">Quy Đổi (55%)</td>';
-        rowBHTanTam.innerHTML = '<td class="row-header">BH Tận Tâm (80%)</td>';
+        rowTraCham.innerHTML = '<td class="row-header">Trả Chậm</td>';
+        rowQuyDoi.innerHTML = '<td class="row-header">Quy Đổi</td>';
+        rowBHTanTam.innerHTML = '<td class="row-header">BH Tận Tâm</td>';
 
         const dates = [];
         const today = new Date();
@@ -309,7 +316,7 @@
             tdTC.id = `hist-tc-${idx}`;
             const tcVal = dayData.traCham || '';
             tdTC.innerText = tcVal;
-            if (tcVal && parseFloat(tcVal) < 70) tdTC.classList.add('text-alert');
+            if (tcVal && parseFloat(tcVal) < 60) tdTC.classList.add('text-alert');
             rowTraCham.appendChild(tdTC);
 
             const tdQD = document.createElement('td');
@@ -335,7 +342,7 @@
 
         if (elTC) {
             elTC.innerText = currentTraChamVal;
-            if (parseFloat(currentTraChamVal) < 70) elTC.classList.add('text-alert');
+            if (parseFloat(currentTraChamVal) < 60) elTC.classList.add('text-alert');
             else elTC.classList.remove('text-alert');
         }
         if (elQD) {
@@ -376,7 +383,6 @@
         setupAutoSaveAt2350();
     };
 
-    // CHỈ XÓA DỮ LIỆU NHẬP HIỆN TẠI - BẢO TỒN LỊCH SỬ 7 NGÀY
     function resetData() { 
         if(confirm("Bạn có chắc muốn xóa tất cả nhập liệu báo cáo hôm nay?")) {
             document.querySelectorAll('.data-input').forEach(i => i.value = ''); 
