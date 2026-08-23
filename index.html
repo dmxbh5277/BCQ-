@@ -56,8 +56,9 @@
         .history-section { margin-top: 12px; border-top: 2px solid #0284c7; padding-top: 8px; }
         .history-title { font-size: 10px; font-weight: bold; color: #0369a1; margin-bottom: 6px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
         .history-table th { background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; font-size: 9px; }
-        .history-table td { font-size: 9px; font-weight: 600; color: #0f172a; height: 24px; border: 1px solid #f1f5f9; }
-        .history-table .row-header { font-weight: bold; text-align: left; padding-left: 6px; background: #fafafa; color: #475569; width: 80px; border-right: 1px solid #f1f5f9; }
+        .history-table td { font-size: 8.5px; font-weight: 600; color: #0f172a; height: 24px; border: 1px solid #f1f5f9; }
+        .history-table .row-header { font-weight: bold; text-align: left; padding-left: 6px; background: #fafafa; color: #475569; width: 95px; border-right: 1px solid #f1f5f9; }
+        .row-sub-header { font-weight: bold; text-align: left; padding-left: 10px; background: #f8fafc; color: #0284c7; }
 
         .text-alert { color: #dc2626 !important; font-weight: 800 !important; }
         .box-alert { background-color: rgba(220, 38, 38, 0.85) !important; border: 1px solid #f87171 !important; }
@@ -116,19 +117,20 @@
             <table class="history-table">
                 <thead>
                     <tr id="hist-header">
-                        <th style="width: 80px;">Nhóm</th>
+                        <th style="width: 95px;">Nhóm</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr id="row-tra-cham">
-                        <td class="row-header">Trả Chậm</td>
-                    </tr>
-                    <tr id="row-quy-doi">
-                        <td class="row-header">Quy Đổi</td>
-                    </tr>
-                    <tr id="row-bh-tan-tam">
-                        <td class="row-header">BH Tận Tâm</td>
-                    </tr>
+                <tbody id="hist-body">
+                    <tr id="row-tra-cham"><td class="row-header">Trả Chậm</td></tr>
+                    <tr id="row-quy-doi"><td class="row-header">Quy Đổi</td></tr>
+                    <tr id="row-bh-tan-tam"><td class="row-header">BH Tận Tâm</td></tr>
+                    
+                    <!-- THỐNG KÊ GTĐH NÓNG -->
+                    <tr id="row-gtdh-tivi"><td class="row-header row-sub-header">GTĐH Tivi</td></tr>
+                    <tr id="row-gtdh-tulanh"><td class="row-header row-sub-header">GTĐH Tủ lạnh</td></tr>
+                    <tr id="row-gtdh-maylanh"><td class="row-header row-sub-header">GTĐH M.Lạnh/MNN</td></tr>
+                    <tr id="row-gtdh-maygiat"><td class="row-header row-sub-header">GTĐH Máy Giặt</td></tr>
+                    <tr id="row-gtdh-smartphone"><td class="row-header row-sub-header">GTĐH Smartphone</td></tr>
                 </tbody>
             </table>
         </div>
@@ -145,6 +147,10 @@
 
     const mainGroupIndices = [0, 1, 2, 3, 4, 5];
     const bhTanTamIndex = 6; 
+
+    // Mảng lưu trữ GTĐH 5 nhóm cần theo dõi: Tivi (0), Tủ lạnh (1), Máy lạnh/MNN (2), Máy giặt (3), Smartphone (4)
+    const gtdhTargets = [0, 1, 2, 3, 4];
+    let currentGtdhValues = { 0: '', 1: '', 2: '', 3: '', 4: '' };
 
     let currentTraChamVal = "0%";
     let currentQuyDoiVal = "0%";
@@ -198,10 +204,13 @@
             const gopVi = getV(`e-${i}`);
             
             if (sl > 0 && (tMat + gopVi) > 0) {
-                const gtdh = (tMat + gopVi) / sl;
-                document.getElementById(`gtdh-${i}`).innerText = Math.round(gtdh).toLocaleString('vi-VN');
+                const gtdh = Math.round((tMat + gopVi) / sl);
+                const formattedGtdh = gtdh.toLocaleString('vi-VN');
+                document.getElementById(`gtdh-${i}`).innerText = formattedGtdh;
+                if (gtdhTargets.includes(i)) currentGtdhValues[i] = formattedGtdh;
             } else {
                 document.getElementById(`gtdh-${i}`).innerText = '';
+                if (gtdhTargets.includes(i)) currentGtdhValues[i] = '';
             }
 
             const df = tMat + gopVi;
@@ -272,7 +281,12 @@
             dayNum: new Date().getDate(),
             traCham: currentTraChamVal,
             quyDoi: currentQuyDoiVal,
-            bhTanTam: currentBHTanTamVal
+            bhTanTam: currentBHTanTamVal,
+            gtdhTivi: currentGtdhValues[0],
+            gtdhTuLanh: currentGtdhValues[1],
+            gtdhMayLanh: currentGtdhValues[2],
+            gtdhMayGiat: currentGtdhValues[3],
+            gtdhSmartphone: currentGtdhValues[4]
         };
 
         localStorage.setItem('reportHistory7Days', JSON.stringify(history));
@@ -287,14 +301,27 @@
     function renderHistoryTable() {
         const history = JSON.parse(localStorage.getItem('reportHistory7Days') || '{}');
         const headerRow = document.getElementById('hist-header');
+        
         const rowTraCham = document.getElementById('row-tra-cham');
         const rowQuyDoi = document.getElementById('row-quy-doi');
         const rowBHTanTam = document.getElementById('row-bh-tan-tam');
+        
+        const rowTivi = document.getElementById('row-gtdh-tivi');
+        const rowTuLanh = document.getElementById('row-gtdh-tulanh');
+        const rowMayLanh = document.getElementById('row-gtdh-maylanh');
+        const rowMayGiat = document.getElementById('row-gtdh-maygiat');
+        const rowSmartphone = document.getElementById('row-gtdh-smartphone');
 
-        headerRow.innerHTML = '<th style="width: 80px;">Nhóm</th>';
+        headerRow.innerHTML = '<th style="width: 95px;">Nhóm</th>';
         rowTraCham.innerHTML = '<td class="row-header">Trả Chậm</td>';
         rowQuyDoi.innerHTML = '<td class="row-header">Quy Đổi</td>';
         rowBHTanTam.innerHTML = '<td class="row-header">BH Tận Tâm</td>';
+        
+        rowTivi.innerHTML = '<td class="row-header row-sub-header">GTĐH Tivi</td>';
+        rowTuLanh.innerHTML = '<td class="row-header row-sub-header">GTĐH Tủ lạnh</td>';
+        rowMayLanh.innerHTML = '<td class="row-header row-sub-header">GTĐH M.Lạnh/MNN</td>';
+        rowMayGiat.innerHTML = '<td class="row-header row-sub-header">GTĐH Máy Giặt</td>';
+        rowSmartphone.innerHTML = '<td class="row-header row-sub-header">GTĐH Smartphone</td>';
 
         const dates = [];
         const today = new Date();
@@ -312,6 +339,7 @@
             th.innerText = dObj.dayNum;
             headerRow.appendChild(th);
 
+            // 1. TRẢ CHẬM
             const tdTC = document.createElement('td');
             tdTC.id = `hist-tc-${idx}`;
             const tcVal = dayData.traCham || '';
@@ -319,6 +347,7 @@
             if (tcVal && parseFloat(tcVal) < 60) tdTC.classList.add('text-alert');
             rowTraCham.appendChild(tdTC);
 
+            // 2. QUY ĐỔI
             const tdQD = document.createElement('td');
             tdQD.id = `hist-qd-${idx}`;
             const qdVal = dayData.quyDoi || '';
@@ -326,12 +355,43 @@
             if (qdVal && parseFloat(qdVal) < 55) tdQD.classList.add('text-alert');
             rowQuyDoi.appendChild(tdQD);
 
+            // 3. BH TẬN TÂM
             const tdBH = document.createElement('td');
             tdBH.id = `hist-bh-${idx}`;
             const bhVal = dayData.bhTanTam || '';
             tdBH.innerText = bhVal;
             if (bhVal && parseFloat(bhVal) < 80) tdBH.classList.add('text-alert');
             rowBHTanTam.appendChild(tdBH);
+
+            // 4. GTĐH TIVI
+            const tdTivi = document.createElement('td');
+            tdTivi.id = `hist-gtdh-0-${idx}`;
+            tdTivi.innerText = dayData.gtdhTivi || '';
+            rowTivi.appendChild(tdTivi);
+
+            // 5. GTĐH TỦ LẠNH
+            const tdTL = document.createElement('td');
+            tdTL.id = `hist-gtdh-1-${idx}`;
+            tdTL.innerText = dayData.gtdhTuLanh || '';
+            rowTuLanh.appendChild(tdTL);
+
+            // 6. GTĐH MÁY LẠNH
+            const tdML = document.createElement('td');
+            tdML.id = `hist-gtdh-2-${idx}`;
+            tdML.innerText = dayData.gtdhMayLanh || '';
+            rowMayLanh.appendChild(tdML);
+
+            // 7. GTĐH MÁY GIẶT
+            const tdMG = document.createElement('td');
+            tdMG.id = `hist-gtdh-3-${idx}`;
+            tdMG.innerText = dayData.gtdhMayGiat || '';
+            rowMayGiat.appendChild(tdMG);
+
+            // 8. GTĐH SMARTPHONE
+            const tdSP = document.createElement('td');
+            tdSP.id = `hist-gtdh-4-${idx}`;
+            tdSP.innerText = dayData.gtdhSmartphone || '';
+            rowSmartphone.appendChild(tdSP);
         });
     }
 
@@ -355,6 +415,12 @@
             if (parseFloat(currentBHTanTamVal) < 80) elBH.classList.add('text-alert');
             else elBH.classList.remove('text-alert');
         }
+
+        // Cập nhật GTĐH các nhóm ngày hôm nay
+        gtdhTargets.forEach(targetIdx => {
+            const elGTDH = document.getElementById(`hist-gtdh-${targetIdx}-0`);
+            if (elGTDH) elGTDH.innerText = currentGtdhValues[targetIdx];
+        });
     }
 
     function setupAutoSaveAt2350() {
