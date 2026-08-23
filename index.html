@@ -64,6 +64,12 @@
         .box-alert { background-color: rgba(220, 38, 38, 0.85) !important; border: 1px solid #f87171 !important; }
         .box-alert .stat-val { color: #ffffff !important; }
         .box-alert .label { color: #fee2e2 !important; opacity: 1; }
+        
+        /* MODAL HIỂN THỊ ẢNH CHO IOS Safari */
+        .ios-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); flex-direction: column; justify-content: center; align-items: center; padding: 15px; }
+        .ios-modal img { max-width: 100%; max-height: 80vh; border-radius: 8px; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .ios-modal-note { color: white; margin-top: 12px; font-size: 12px; font-weight: 500; text-align: center; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; }
+        .ios-modal-close { position: absolute; top: 15px; right: 20px; color: white; font-size: 28px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -136,6 +142,13 @@
     </div>
 </div>
 
+<!-- POPUP MODAL HỖ TRỢ LƯU ẢNH TRÊN IOS -->
+<div id="iosModal" class="ios-modal">
+    <span class="ios-modal-close" onclick="closeIosModal()">&times;</span>
+    <img id="iosImg" src="" alt="Báo Cáo">
+    <div class="ios-modal-note">💡 Nhấn giữ 1 giây vào ảnh ➔ Chọn <b>"Thêm vào Ảnh"</b></div>
+</div>
+
 <script>
     const config = [
         { n: 'Tivi', hs: 1.0 }, { n: 'Tủ lạnh', hs: 1.0 }, { n: 'Máy lạnh/MNN', hs: 1.0 }, { n: 'Máy Giặt', hs: 1.0 },
@@ -147,15 +160,7 @@
     const mainGroupIndices = [0, 1, 2, 3, 4, 5];
     const bhTanTamIndex = 6; 
 
-    // Hạn mức kiểm tra GTĐH để tô đỏ
-    const gtdhThresholds = {
-        0: 12000, // Tivi < 12,000
-        1: 10000, // Tủ lạnh < 10,000
-        2: 10000, // Máy Lạnh/MNN < 10,000
-        3: 10000, // Máy Giặt < 10,000
-        4: 8000   // Smartphone < 8,000
-    };
-
+    const gtdhThresholds = { 0: 12000, 1: 10000, 2: 10000, 3: 10000, 4: 8000 };
     const gtdhTargets = [0, 1, 2, 3, 4];
     let currentGtdhValues = { 0: '', 1: '', 2: '', 3: '', 4: '' };
 
@@ -176,25 +181,56 @@
         tbody.appendChild(row);
     });
 
+    // TỐI ƯU HÀM TẢI ẢNH CHO IOS SAFARI & MOBILE
     async function downloadReport() {
         const btnGroup = document.getElementById('btn-group');
         btnGroup.style.display = 'none';
 
-        const canvas = await html2canvas(document.getElementById('capture-area'), {
-            scale: 3, 
-            logging: false,
-            useCORS: true,
-            windowWidth: document.getElementById('capture-area').scrollWidth,
-            windowHeight: document.getElementById('capture-area').scrollHeight
-        });
+        try {
+            const element = document.getElementById('capture-area');
+            const canvas = await html2canvas(element, {
+                scale: 2, // Mức Retina tiêu chuẩn, tránh quá tải RAM iOS
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff'
+            });
 
-        const link = document.createElement('a');
-        const date = document.getElementById('date-display').innerText.replace(/\//g, '-') || 'baocao';
-        link.download = `BaoCao_${date}.png`;
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-        
-        btnGroup.style.display = 'flex';
+            const dateStr = document.getElementById('date-display').innerText.replace(/\//g, '-') || 'baocao';
+            const fileName = `BaoCao_${dateStr}.png`;
+
+            // Kiểm tra thiết bị iOS (iPhone/iPad/iPod)
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+            if (isIOS) {
+                // Trên iOS Safari: Mở Pop-up xem ảnh trực tiếp để nhấn giữ "Lưu ảnh"
+                const imgData = canvas.toDataURL("image/png");
+                document.getElementById('iosImg').src = imgData;
+                document.getElementById('iosModal').style.display = 'flex';
+            } else {
+                // Trên Android / Desktop: Sử dụng Blob URL để tải xuống trực tiếp
+                canvas.toBlob((blob) => {
+                    if (!blob) return;
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = fileName;
+                    link.href = url;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                }, 'image/png');
+            }
+        } catch (err) {
+            alert('Có lỗi khi tạo ảnh. Vui lòng thử lại!');
+            console.error(err);
+        } finally {
+            btnGroup.style.display = 'flex';
+        }
+    }
+
+    function closeIosModal() {
+        document.getElementById('iosModal').style.display = 'none';
     }
 
     function format(e) { e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
@@ -216,7 +252,6 @@
                 const formattedGtdh = gtdh.toLocaleString('vi-VN');
                 elGTDH.innerText = formattedGtdh;
                 
-                // Kiểm tra tô đỏ trên bảng chính
                 if (gtdhThresholds[i] !== undefined && gtdh < gtdhThresholds[i]) {
                     elGTDH.classList.add('text-alert');
                 } else {
@@ -369,7 +404,6 @@
             th.innerText = dObj.dayNum;
             headerRow.appendChild(th);
 
-            // 1. TRẢ CHẬM
             const tdTC = document.createElement('td');
             tdTC.id = `hist-tc-${idx}`;
             const tcVal = dayData.traCham || '';
@@ -377,7 +411,6 @@
             if (tcVal && parseFloat(tcVal) < 60) tdTC.classList.add('text-alert');
             rowTraCham.appendChild(tdTC);
 
-            // 2. QUY ĐỔI
             const tdQD = document.createElement('td');
             tdQD.id = `hist-qd-${idx}`;
             const qdVal = dayData.quyDoi || '';
@@ -385,7 +418,6 @@
             if (qdVal && parseFloat(qdVal) < 55) tdQD.classList.add('text-alert');
             rowQuyDoi.appendChild(tdQD);
 
-            // 3. BH TẬN TÂM
             const tdBH = document.createElement('td');
             tdBH.id = `hist-bh-${idx}`;
             const bhVal = dayData.bhTanTam || '';
@@ -393,35 +425,30 @@
             if (bhVal && parseFloat(bhVal) < 80) tdBH.classList.add('text-alert');
             rowBHTanTam.appendChild(tdBH);
 
-            // 4. GTĐH TIVI (< 12000)
             const tdTivi = document.createElement('td');
             tdTivi.id = `hist-gtdh-0-${idx}`;
             tdTivi.innerText = dayData.gtdhTivi || '';
             checkAndApplyGtdhAlert(tdTivi, dayData.gtdhTivi, gtdhThresholds[0]);
             rowTivi.appendChild(tdTivi);
 
-            // 5. GTĐH TỦ LẠNH (< 10000)
             const tdTL = document.createElement('td');
             tdTL.id = `hist-gtdh-1-${idx}`;
             tdTL.innerText = dayData.gtdhTuLanh || '';
             checkAndApplyGtdhAlert(tdTL, dayData.gtdhTuLanh, gtdhThresholds[1]);
             rowTuLanh.appendChild(tdTL);
 
-            // 6. GTĐH MÁY LẠNH (< 10000)
             const tdML = document.createElement('td');
             tdML.id = `hist-gtdh-2-${idx}`;
             tdML.innerText = dayData.gtdhMayLanh || '';
             checkAndApplyGtdhAlert(tdML, dayData.gtdhMayLanh, gtdhThresholds[2]);
             rowMayLanh.appendChild(tdML);
 
-            // 7. GTĐH MÁY GIẶT (< 10000)
             const tdMG = document.createElement('td');
             tdMG.id = `hist-gtdh-3-${idx}`;
             tdMG.innerText = dayData.gtdhMayGiat || '';
             checkAndApplyGtdhAlert(tdMG, dayData.gtdhMayGiat, gtdhThresholds[3]);
             rowMayGiat.appendChild(tdMG);
 
-            // 8. GTĐH SMARTPHONE (< 8000)
             const tdSP = document.createElement('td');
             tdSP.id = `hist-gtdh-4-${idx}`;
             tdSP.innerText = dayData.gtdhSmartphone || '';
@@ -451,7 +478,6 @@
             else elBH.classList.remove('text-alert');
         }
 
-        // Cập nhật GTĐH các nhóm ngày hôm nay & áp dụng tô màu
         gtdhTargets.forEach(targetIdx => {
             const elGTDH = document.getElementById(`hist-gtdh-${targetIdx}-0`);
             if (elGTDH) {
