@@ -125,7 +125,6 @@
                     <tr id="row-quy-doi"><td class="row-header">Quy Đổi</td></tr>
                     <tr id="row-bh-tan-tam"><td class="row-header">BH Tận Tâm</td></tr>
                     
-                    <!-- THỐNG KÊ GTĐH NÓNG -->
                     <tr id="row-gtdh-tivi"><td class="row-header row-sub-header">GTĐH Tivi</td></tr>
                     <tr id="row-gtdh-tulanh"><td class="row-header row-sub-header">GTĐH Tủ lạnh</td></tr>
                     <tr id="row-gtdh-maylanh"><td class="row-header row-sub-header">GTĐH M.Lạnh/MNN</td></tr>
@@ -148,7 +147,15 @@
     const mainGroupIndices = [0, 1, 2, 3, 4, 5];
     const bhTanTamIndex = 6; 
 
-    // Mảng lưu trữ GTĐH 5 nhóm cần theo dõi: Tivi (0), Tủ lạnh (1), Máy lạnh/MNN (2), Máy giặt (3), Smartphone (4)
+    // Hạn mức kiểm tra GTĐH để tô đỏ
+    const gtdhThresholds = {
+        0: 12000, // Tivi < 12,000
+        1: 10000, // Tủ lạnh < 10,000
+        2: 10000, // Máy Lạnh/MNN < 10,000
+        3: 10000, // Máy Giặt < 10,000
+        4: 8000   // Smartphone < 8,000
+    };
+
     const gtdhTargets = [0, 1, 2, 3, 4];
     let currentGtdhValues = { 0: '', 1: '', 2: '', 3: '', 4: '' };
 
@@ -202,14 +209,24 @@
             const sl = getV(`sl-${i}`);
             const tMat = getV(`d-${i}`);
             const gopVi = getV(`e-${i}`);
+            const elGTDH = document.getElementById(`gtdh-${i}`);
             
             if (sl > 0 && (tMat + gopVi) > 0) {
                 const gtdh = Math.round((tMat + gopVi) / sl);
                 const formattedGtdh = gtdh.toLocaleString('vi-VN');
-                document.getElementById(`gtdh-${i}`).innerText = formattedGtdh;
+                elGTDH.innerText = formattedGtdh;
+                
+                // Kiểm tra tô đỏ trên bảng chính
+                if (gtdhThresholds[i] !== undefined && gtdh < gtdhThresholds[i]) {
+                    elGTDH.classList.add('text-alert');
+                } else {
+                    elGTDH.classList.remove('text-alert');
+                }
+
                 if (gtdhTargets.includes(i)) currentGtdhValues[i] = formattedGtdh;
             } else {
-                document.getElementById(`gtdh-${i}`).innerText = '';
+                elGTDH.innerText = '';
+                elGTDH.classList.remove('text-alert');
                 if (gtdhTargets.includes(i)) currentGtdhValues[i] = '';
             }
 
@@ -298,6 +315,19 @@
         alert("Đã chốt và lưu dữ liệu hôm nay thành công!");
     }
 
+    function checkAndApplyGtdhAlert(tdEl, valStr, threshold) {
+        if (!valStr) {
+            tdEl.classList.remove('text-alert');
+            return;
+        }
+        const valNum = parseFloat(valStr.replace(/\./g, '')) || 0;
+        if (valNum > 0 && valNum < threshold) {
+            tdEl.classList.add('text-alert');
+        } else {
+            tdEl.classList.remove('text-alert');
+        }
+    }
+
     function renderHistoryTable() {
         const history = JSON.parse(localStorage.getItem('reportHistory7Days') || '{}');
         const headerRow = document.getElementById('hist-header');
@@ -363,34 +393,39 @@
             if (bhVal && parseFloat(bhVal) < 80) tdBH.classList.add('text-alert');
             rowBHTanTam.appendChild(tdBH);
 
-            // 4. GTĐH TIVI
+            // 4. GTĐH TIVI (< 12000)
             const tdTivi = document.createElement('td');
             tdTivi.id = `hist-gtdh-0-${idx}`;
             tdTivi.innerText = dayData.gtdhTivi || '';
+            checkAndApplyGtdhAlert(tdTivi, dayData.gtdhTivi, gtdhThresholds[0]);
             rowTivi.appendChild(tdTivi);
 
-            // 5. GTĐH TỦ LẠNH
+            // 5. GTĐH TỦ LẠNH (< 10000)
             const tdTL = document.createElement('td');
             tdTL.id = `hist-gtdh-1-${idx}`;
             tdTL.innerText = dayData.gtdhTuLanh || '';
+            checkAndApplyGtdhAlert(tdTL, dayData.gtdhTuLanh, gtdhThresholds[1]);
             rowTuLanh.appendChild(tdTL);
 
-            // 6. GTĐH MÁY LẠNH
+            // 6. GTĐH MÁY LẠNH (< 10000)
             const tdML = document.createElement('td');
             tdML.id = `hist-gtdh-2-${idx}`;
             tdML.innerText = dayData.gtdhMayLanh || '';
+            checkAndApplyGtdhAlert(tdML, dayData.gtdhMayLanh, gtdhThresholds[2]);
             rowMayLanh.appendChild(tdML);
 
-            // 7. GTĐH MÁY GIẶT
+            // 7. GTĐH MÁY GIẶT (< 10000)
             const tdMG = document.createElement('td');
             tdMG.id = `hist-gtdh-3-${idx}`;
             tdMG.innerText = dayData.gtdhMayGiat || '';
+            checkAndApplyGtdhAlert(tdMG, dayData.gtdhMayGiat, gtdhThresholds[3]);
             rowMayGiat.appendChild(tdMG);
 
-            // 8. GTĐH SMARTPHONE
+            // 8. GTĐH SMARTPHONE (< 8000)
             const tdSP = document.createElement('td');
             tdSP.id = `hist-gtdh-4-${idx}`;
             tdSP.innerText = dayData.gtdhSmartphone || '';
+            checkAndApplyGtdhAlert(tdSP, dayData.gtdhSmartphone, gtdhThresholds[4]);
             rowSmartphone.appendChild(tdSP);
         });
     }
@@ -416,10 +451,14 @@
             else elBH.classList.remove('text-alert');
         }
 
-        // Cập nhật GTĐH các nhóm ngày hôm nay
+        // Cập nhật GTĐH các nhóm ngày hôm nay & áp dụng tô màu
         gtdhTargets.forEach(targetIdx => {
             const elGTDH = document.getElementById(`hist-gtdh-${targetIdx}-0`);
-            if (elGTDH) elGTDH.innerText = currentGtdhValues[targetIdx];
+            if (elGTDH) {
+                const valStr = currentGtdhValues[targetIdx];
+                elGTDH.innerText = valStr;
+                checkAndApplyGtdhAlert(elGTDH, valStr, gtdhThresholds[targetIdx]);
+            }
         });
     }
 
