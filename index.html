@@ -65,7 +65,7 @@
         .box-alert .stat-val { color: #ffffff !important; }
         .box-alert .label { color: #fee2e2 !important; opacity: 1; }
         
-        /* MODAL HIỂN THỊ ẢNH CHO IOS Safari */
+        /* MODAL HIỂN THỊ ẢNH CHO IOS SAFARI */
         .ios-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); flex-direction: column; justify-content: center; align-items: center; padding: 15px; }
         .ios-modal img { max-width: 100%; max-height: 80vh; border-radius: 8px; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
         .ios-modal-note { color: white; margin-top: 12px; font-size: 12px; font-weight: 500; text-align: center; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; }
@@ -168,16 +168,28 @@
     let currentQuyDoiVal = "0%";
     let currentBHTanTamVal = "0%";
 
+    // Hàm kiểm tra nếu chưa nhập tên NV thì không cho chọn ô nhập liệu
+    function checkNameRequired(inputEl) {
+        const nvName = document.getElementById('nv-name').value.trim();
+        if (!nvName) {
+            inputEl.blur(); // Nhả focus ra ngay lập tức
+            alert('Vui lòng NHẬP TÊN NV trước khi nhập liệu!');
+            document.getElementById('nv-name').focus();
+            return false;
+        }
+        return true;
+    }
+
     const tbody = document.getElementById('data-rows');
     config.forEach((item, i) => {
         const row = document.createElement('tr');
         row.innerHTML = `<td class="sticky-col">${item.n}</td>
-            <td><input type="text" class="cell-input data-input" id="sl-${i}" oninput="format(this); calc(); saveData();"></td>
-            <td><input type="text" id="d-${i}" class="cell-input data-input" oninput="format(this); calc(); saveData();"></td>
-            <td><input type="text" id="e-${i}" class="cell-input data-input" oninput="format(this); calc(); saveData();"></td>
+            <td><input type="tel" inputmode="numeric" class="cell-input data-input" id="sl-${i}" onfocus="checkNameRequired(this)" oninput="format(this); calc(); saveData();"></td>
+            <td><input type="tel" inputmode="numeric" id="d-${i}" class="cell-input data-input" onfocus="checkNameRequired(this)" oninput="format(this); calc(); saveData();"></td>
+            <td><input type="tel" inputmode="numeric" id="e-${i}" class="cell-input data-input" onfocus="checkNameRequired(this)" oninput="format(this); calc(); saveData();"></td>
             <td id="gtdh-${i}" class="gtdh-col"></td>
             <td id="g-${i}" class="dtqd-col"></td>
-            <td><input type="text" class="cell-input data-input" id="kt-${i}" oninput="saveData()"></td>`;
+            <td><input type="text" class="cell-input data-input" id="kt-${i}" onfocus="checkNameRequired(this)" oninput="saveData()"></td>`;
         tbody.appendChild(row);
     });
 
