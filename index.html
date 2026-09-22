@@ -2,13 +2,13 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=3.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=3.0, viewport-fit=cover">
     <title>Báo Cáo Quy Đổi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
-        body { font-family: 'Google Sans', sans-serif; margin: 0; background: #eef2f6; touch-action: manipulation; }
+        body { font-family: 'Google Sans', sans-serif; margin: 0; background: #eef2f6; touch-action: manipulation; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         .container { min-width: 360px; display: flex; flex-direction: column; background: white; padding: 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         
         /* HEADER PHỐI MÀU CÂN ĐỐI */
@@ -17,7 +17,8 @@
         .header-title { font-weight: bold; font-size: 13px; letter-spacing: 0.5px; white-space: nowrap; flex: 1; }
         
         .btn-group { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
-        .btn-action { border: none; padding: 5px 8px; font-size: 8.5px; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .btn-action { border: none; padding: 8px 10px; min-height: 36px; display: flex; align-items: center; justify-content: center; font-size: 9px; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .btn-action:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .btn-save-today { background: #eab308; color: #1e293b; }
         .btn-save-today:hover { background: #ca8a04; }
@@ -28,7 +29,7 @@
         .btn-reset-top:hover { background: #dc2626; }
         
         .grid-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .input-box { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 4px; height: 46px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
+        .input-box { background: rgba(255, 255, 255, 0.15); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 4px; height: 46px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
         .label { font-size: 7.5px; opacity: 0.9; text-transform: uppercase; text-align: center; letter-spacing: 0.3px; }
         .input-val { background: none; border: none; color: #fde047; font-weight: bold; text-align: center; font-size: 18px; width: 100%; outline: none; }
         .stat-val { font-size: 18px; font-weight: bold; color: #fde047; text-align: center; }
@@ -38,13 +39,15 @@
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         thead { background: #1e293b; color: white; }
         th { font-size: 9px; font-weight: 700; border: 1px solid #334155; padding: 6px 2px; text-transform: uppercase; letter-spacing: 0.2px; }
-        tr { height: 25px; }
+        tr { height: 30px; }
         tr:nth-child(even) { background-color: #fafafa; }
         tr:hover { background-color: #f1f5f9; }
         td { border: 1px solid #f1f5f9; padding: 0; text-align: center; }
         
-        .cell-input { width: 100%; height: 23px; border: none; text-align: center; font-size: 9px; font-weight: 500; outline: none; background: transparent; }
+        /* Font-size 16px là mức bắt buộc để Safari/iOS không tự động zoom khi focus vào input */
+        .cell-input { width: 100%; height: 28px; border: none; text-align: center; font-size: 16px; font-weight: 500; outline: none; background: transparent; }
         .cell-input:focus { background-color: #e0f2fe; }
+        .cell-input:disabled { opacity: 0.35; background: #f8fafc; cursor: not-allowed; }
         
         .sticky-col { position: sticky; left: 0; background: #ffffff; z-index: 10; text-align: left; padding-left: 6px; font-weight: bold; font-size: 9.5px; color: #334155; border-right: 1px solid #f1f5f9; }
         tr:nth-child(even) .sticky-col { background: #fafafa; }
@@ -65,6 +68,12 @@
         .box-alert .stat-val { color: #ffffff !important; }
         .box-alert .label { color: #fee2e2 !important; opacity: 1; }
         
+        /* HINT NHẮC NHẬP TÊN NV (thay cho alert chặn thao tác) */
+        .name-hint { display: none; text-align: center; color: #fde047; font-size: 10px; font-weight: 600; margin-top: -4px; }
+
+        /* OVERLAY LOADING KHI XỬ LÝ TẠO ẢNH */
+        .loading-overlay { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(255,255,255,0.75); align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #0369a1; }
+
         /* MODAL HIỂN THỊ ẢNH CHO IOS SAFARI */
         .ios-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); flex-direction: column; justify-content: center; align-items: center; padding: 15px; }
         .ios-modal img { max-width: 100%; max-height: 80vh; border-radius: 8px; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
@@ -86,7 +95,7 @@
             </div>
         </div>
         <div class="grid-header">
-            <div class="input-box"><div class="label">Tên NV</div><input type="text" id="nv-name" class="input-val" oninput="saveData()"></div>
+            <div class="input-box"><div class="label">Tên NV</div><input type="text" id="nv-name" class="input-val" oninput="saveData(); updateInputLock();"></div>
             <div class="input-box"><div class="label">Tổng Doanh Thu</div><div id="total-rev" class="stat-val">0</div></div>
             
             <div class="input-box" id="box-h1"><div class="label">Trả Góp (70%)</div><div id="h1" class="stat-val">0%</div></div>
@@ -96,6 +105,7 @@
             
             <div class="input-box" id="box-i1"><div class="label">Quy đổi (55%)</div><div id="i1" class="stat-val">0%</div></div>
         </div>
+        <div id="name-hint" class="name-hint">⚠️ Vui lòng nhập Tên NV trước khi nhập liệu</div>
     </div>
 
     <!-- BẢNG NHẬP LIỆU CHÍNH -->
@@ -142,6 +152,8 @@
     </div>
 </div>
 
+<div id="loadingOverlay" class="loading-overlay">Đang tạo ảnh báo cáo...</div>
+
 <!-- POPUP MODAL HỖ TRỢ LƯU ẢNH TRÊN IOS -->
 <div id="iosModal" class="ios-modal">
     <span class="ios-modal-close" onclick="closeIosModal()">&times;</span>
@@ -168,35 +180,38 @@
     let currentQuyDoiVal = "0%";
     let currentBHTanTamVal = "0%";
 
-    // Hàm kiểm tra nếu chưa nhập tên NV thì không cho chọn ô nhập liệu
-    function checkNameRequired(inputEl) {
+    // Khóa/mở các ô nhập liệu theo Tên NV - hiện hint nhẹ thay cho alert chặn thao tác
+    function updateInputLock() {
         const nvName = document.getElementById('nv-name').value.trim();
-        if (!nvName) {
-            inputEl.blur(); // Nhả focus ra ngay lập tức
-            alert('Vui lòng nhập TÊN NV trước khi nhập liệu!');
-            document.getElementById('nv-name').focus();
-            return false;
-        }
-        return true;
+        document.querySelectorAll('.data-input').forEach(inp => { inp.disabled = !nvName; });
+        const hint = document.getElementById('name-hint');
+        if (hint) hint.style.display = nvName ? 'none' : 'block';
     }
 
     const tbody = document.getElementById('data-rows');
     config.forEach((item, i) => {
         const row = document.createElement('tr');
         row.innerHTML = `<td class="sticky-col">${item.n}</td>
-            <td><input type="tel" inputmode="numeric" class="cell-input data-input" id="sl-${i}" onfocus="checkNameRequired(this)" oninput="format(this); calc(); saveData();"></td>
-            <td><input type="tel" inputmode="numeric" id="d-${i}" class="cell-input data-input" onfocus="checkNameRequired(this)" oninput="format(this); calc(); saveData();"></td>
-            <td><input type="tel" inputmode="numeric" id="e-${i}" class="cell-input data-input" onfocus="checkNameRequired(this)" oninput="format(this); calc(); saveData();"></td>
+            <td><input type="tel" inputmode="numeric" class="cell-input data-input" id="sl-${i}" oninput="format(this); calc(); saveData();"></td>
+            <td><input type="tel" inputmode="numeric" id="d-${i}" class="cell-input data-input" oninput="format(this); calc(); saveData();"></td>
+            <td><input type="tel" inputmode="numeric" id="e-${i}" class="cell-input data-input" oninput="format(this); calc(); saveData();"></td>
             <td id="gtdh-${i}" class="gtdh-col"></td>
             <td id="g-${i}" class="dtqd-col"></td>
-            <td><input type="text" class="cell-input data-input" id="kt-${i}" onfocus="checkNameRequired(this)" oninput="saveData()"></td>`;
+            <td><input type="text" class="cell-input data-input" id="kt-${i}" oninput="saveData()"></td>`;
         tbody.appendChild(row);
     });
 
     // TỐI ƯU HÀM TẢI ẢNH CHO IOS SAFARI & MOBILE
     async function downloadReport() {
         const btnGroup = document.getElementById('btn-group');
+        const overlay = document.getElementById('loadingOverlay');
         btnGroup.style.display = 'none';
+        overlay.style.display = 'flex'; // Hiện loading - overlay nằm ngoài #capture-area nên không lộ vào ảnh
+
+        const finish = () => {
+            overlay.style.display = 'none';
+            btnGroup.style.display = 'flex';
+        };
 
         try {
             const element = document.getElementById('capture-area');
@@ -214,15 +229,28 @@
             // Kiểm tra thiết bị iOS (iPhone/iPad/iPod)
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-            if (isIOS) {
-                // Trên iOS Safari: Mở Pop-up xem ảnh trực tiếp để nhấn giữ "Lưu ảnh"
-                const imgData = canvas.toDataURL("image/png");
-                document.getElementById('iosImg').src = imgData;
-                document.getElementById('iosModal').style.display = 'flex';
-            } else {
-                // Trên Android / Desktop: Sử dụng Blob URL để tải xuống trực tiếp
-                canvas.toBlob((blob) => {
-                    if (!blob) return;
+            canvas.toBlob(async (blob) => {
+                if (!blob) { finish(); return; }
+
+                // Ưu tiên Web Share API (iOS 15+ / Android hiện đại): lưu ảnh chỉ 1 chạm qua share sheet gốc
+                try {
+                    const file = new File([blob], fileName, { type: 'image/png' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({ files: [file], title: fileName });
+                        finish();
+                        return;
+                    }
+                } catch (shareErr) {
+                    // Người dùng bấm hủy share hoặc thiết bị lỗi -> rơi xuống fallback bên dưới
+                }
+
+                if (isIOS) {
+                    // Fallback trên iOS Safari cũ: Mở Pop-up xem ảnh trực tiếp để nhấn giữ "Lưu ảnh"
+                    const imgData = canvas.toDataURL("image/png");
+                    document.getElementById('iosImg').src = imgData;
+                    document.getElementById('iosModal').style.display = 'flex';
+                } else {
+                    // Trên Android / Desktop không hỗ trợ Share: Sử dụng Blob URL để tải xuống trực tiếp
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.download = fileName;
@@ -231,13 +259,13 @@
                     link.click();
                     document.body.removeChild(link);
                     setTimeout(() => URL.revokeObjectURL(url), 1000);
-                }, 'image/png');
-            }
+                }
+                finish();
+            }, 'image/png');
         } catch (err) {
             alert('Có lỗi khi tạo ảnh. Vui lòng thử lại!');
             console.error(err);
-        } finally {
-            btnGroup.style.display = 'flex';
+            finish();
         }
     }
 
@@ -245,7 +273,14 @@
         document.getElementById('iosModal').style.display = 'none';
     }
 
-    function format(e) { e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+    function format(e) {
+        const caretPos = e.selectionStart;
+        const oldLen = e.value.length;
+        e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        const newLen = e.value.length;
+        const newPos = Math.max(0, caretPos + (newLen - oldLen));
+        e.setSelectionRange(newPos, newPos);
+    }
     function getV(id) { 
         const el = document.getElementById(id);
         return el ? (parseFloat(el.value.replace(/\./g, "")) || 0) : 0; 
@@ -320,7 +355,15 @@
         updateTodayInHistoryTable();
     }
 
+    let saveTimeout = null;
     function saveData() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(flushSave, 400);
+    }
+
+    // Ghi dữ liệu ngay lập tức (dùng khi debounce chưa kịp chạy nhưng cần lưu chắc chắn)
+    function flushSave() {
+        clearTimeout(saveTimeout);
         const data = {};
         document.querySelectorAll('input').forEach(input => { data[input.id] = input.value; });
         localStorage.setItem('reportData', JSON.stringify(data));
@@ -500,15 +543,28 @@
         });
     }
 
+    let autoSavedToday = false;
     function setupAutoSaveAt2350() {
         setInterval(() => {
             const now = new Date();
-            if (now.getHours() === 23 && now.getMinutes() === 50 && now.getSeconds() === 0) {
-                autoSaveTodayStats();
-                renderHistoryTable();
+            if (now.getHours() === 23 && now.getMinutes() >= 50) {
+                if (!autoSavedToday) {
+                    autoSaveTodayStats();
+                    renderHistoryTable();
+                    autoSavedToday = true;
+                }
+            } else {
+                autoSavedToday = false; // reset cờ để sẵn sàng cho lượt lưu của ngày kế tiếp
             }
-        }, 1000);
+        }, 5000); // kiểm tra mỗi 5s thay vì 1s để giảm tải CPU/pin trên mobile
     }
+
+    // Lưu ngay khi người dùng rời tab/khóa màn hình - phòng trường hợp iOS Safari
+    // ngắt trang bất ngờ trước khi setTimeout debounce của saveData() kịp chạy
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') flushSave();
+    });
+    window.addEventListener('pagehide', flushSave);
 
     window.onload = function() {
         setToday(); 
@@ -523,6 +579,7 @@
         }
         renderHistoryTable();
         calc();
+        updateInputLock();
         setupAutoSaveAt2350();
     };
 
@@ -531,6 +588,7 @@
             document.querySelectorAll('.data-input').forEach(i => i.value = ''); 
             localStorage.removeItem('reportData');
             calc(); 
+            updateInputLock();
         }
     }
 </script>
